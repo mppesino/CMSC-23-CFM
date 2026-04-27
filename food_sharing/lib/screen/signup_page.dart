@@ -55,14 +55,6 @@ Widget build(BuildContext context) {
               decoration: TextStyleTheme.textInput(label: "Email", prefixIcon: const Icon(Icons.mail_outline))
             )),
 
-            Padding(
-              padding: TextStyleTheme.insets,
-              child:
-              TextFormField(
-              cursorColor: BrandColors.darkGreen,
-              decoration: TextStyleTheme.textInput(label: "Username")
-            )),
-
             Row(children: [
               Expanded(
                 child: Padding(
@@ -83,6 +75,15 @@ Widget build(BuildContext context) {
 
             ],),
             
+
+            Padding(
+              padding: TextStyleTheme.insets,
+              child:
+              TextFormField(
+              cursorColor: BrandColors.darkGreen,
+              decoration: TextStyleTheme.textInput(label: "Username")
+            )),
+
             Padding(
               padding: const EdgeInsets.all(12),
               child:
