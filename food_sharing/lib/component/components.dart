@@ -9,7 +9,7 @@ static Widget autoSizedColumn({required List<Widget> children}) {
     physics: const ClampingScrollPhysics(), 
     slivers: [
       SliverFillRemaining(
-        hasScrollBody: false, // This is the magic property
+        hasScrollBody: false, 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: children,
