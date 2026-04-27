@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_sharing/component/components.dart';
 import 'package:food_sharing/theme/app_theme.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LandingPage extends StatelessWidget {
   final String title;
