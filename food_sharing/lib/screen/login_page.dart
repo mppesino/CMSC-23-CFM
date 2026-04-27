@@ -53,7 +53,7 @@ Widget build(BuildContext context) {
               child:
               TextFormField(
               cursorColor: BrandColors.darkGreen,
-              decoration: TextStyleTheme.textInput(label: "Email", prefixIcon: const Icon(Icons.mail_outline))
+              decoration: TextStyleTheme.textInput(label: "Email / Username", prefixIcon: const Icon(Icons.mail_outline))
             )),
             Padding(
               padding: TextStyleTheme.insets,

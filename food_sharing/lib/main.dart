@@ -11,7 +11,7 @@ void main() {
 class FoodSharing extends StatelessWidget {
   const FoodSharing({super.key});
   static const appTitle = 'salo';
-  static const appSubtitle = ['a meal from an iskolar', 'to another'];
+  static const appSubtitle = ['meals from iskolars', 'for iskolars'];
 
   @override
   Widget build(BuildContext context) {
