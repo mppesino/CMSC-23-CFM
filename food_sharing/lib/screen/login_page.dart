@@ -16,7 +16,7 @@ class LoginPageState extends State<LoginPage> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    body: AppComponents.autoSizedColumn(children: [
+    body: AutoSizedColumn(children: [
       const SizedBox(height: 40),
       FaIcon(
         FontAwesomeIcons.bowlFood,
@@ -33,8 +33,7 @@ Widget build(BuildContext context) {
       Expanded(
           child:Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: AppComponents.sectionCard(
-          context: context,
+        child: SectionCard(
           children: [
             const SizedBox(height: 20),
             Text(
@@ -68,11 +67,11 @@ Widget build(BuildContext context) {
         
             Padding(
               padding: TextStyleTheme.insets,
-              child: AppComponents.mainButton(() => print("Login"), "Login", "red"),
+              child: MainButton(onPressed: () => print("Login"), text:  "Login", style: "red"),
             ),
             Padding(
               padding: TextStyleTheme.insets,
-              child: AppComponents.mainButton(() => Navigator.pop(context), "Back", "gray"),
+              child: MainButton(onPressed:() => Navigator.pop(context),text: "Back", style: "gray"),
             ),
           ],
         ),

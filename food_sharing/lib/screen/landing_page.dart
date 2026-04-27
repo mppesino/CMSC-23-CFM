@@ -17,7 +17,7 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
       return Scaffold(
-        body: AppComponents.centeredColumn(children: [
+        body: CenteredColumn(children: [
               FaIcon(
                 FontAwesomeIcons.bowlFood,      
                 color: BrandColors.darkGreen, 
@@ -36,8 +36,8 @@ class LandingPage extends StatelessWidget {
                   ),
 
               Padding(padding: EdgeInsets.only(top:120), child: Column(children: [
-                Padding(padding: const EdgeInsets.all(6), child:AppComponents.mainButton(() {Navigator.pushNamed(context, '/login');}, "Login", "red")),
-                Padding(padding: const EdgeInsets.all(6), child:AppComponents.mainButton(() {Navigator.pushNamed(context, '/signup');}, "Sign Up", "gray")),
+                Padding(padding: const EdgeInsets.all(6), child:MainButton(onPressed: () {Navigator.pushNamed(context, '/login');}, text: "Login", style:  "red")),
+                Padding(padding: const EdgeInsets.all(6), child:MainButton(onPressed:() {Navigator.pushNamed(context, '/signup');}, text: "Sign Up", style: "gray")),
 
               ],))
         ])
