@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_sharing/component/components.dart';
+import 'package:food_sharing/component/buttons.dart';
+import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 class LandingPage extends StatelessWidget {

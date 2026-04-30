@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_sharing/component/components.dart';
+import 'package:food_sharing/component/buttons.dart';
+import 'package:food_sharing/component/layouts.dart';
+import 'package:food_sharing/component/sections.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,7 +18,7 @@ class LoginPageState extends State<LoginPage> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    body: AutoSizedColumn(children: [
+    body: FullHeightColumn(children: [
       const SizedBox(height: 40),
       FaIcon(
         FontAwesomeIcons.bowlFood,
