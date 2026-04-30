@@ -6,6 +6,14 @@ ThemeData appTheme() {
 
     scaffoldBackgroundColor: BrandColors.cream,
 
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: BrandColors.cream
+    ),
+
+    appBarTheme: AppBarThemeData(
+      backgroundColor: BrandColors.cream
+    ),  
+
     primaryColor: BrandColors.darkGreen,
 
     textTheme: TextTheme(
@@ -56,10 +64,17 @@ class TextStyleTheme {
     height: 0.8,
   );
 
-  static final subtitle = GoogleFonts.sourGummy(
+  static final body = GoogleFonts.sourGummy(
     fontSize: 18,
     color: BrandColors.black
   );
+
+  static final subtitle = GoogleFonts.sourGummy(
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+    color: BrandColors.black
+  );
+
 
   static final button = GoogleFonts.sourGummy(    
     fontSize: 18,

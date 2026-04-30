@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class ProfilePicture extends StatelessWidget {
-  final int userID;
+  final String userID;
 
   const ProfilePicture({
     super.key,

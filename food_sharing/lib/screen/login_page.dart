@@ -45,7 +45,7 @@ Widget build(BuildContext context) {
             ),
             Text(
               "Hungry for more?",
-              style: TextStyleTheme.subtitle,
+              style: TextStyleTheme.body,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 100),
@@ -69,11 +69,11 @@ Widget build(BuildContext context) {
         
             Padding(
               padding: TextStyleTheme.insets,
-              child: MainButton(onPressed: () => print("Login"), text:  "Login", style: "red"),
+              child: PrimaryButton(onPressed: () => Navigator.pushNamed(context, '/app_frame'), text:  "Login", style: "red"),
             ),
             Padding(
               padding: TextStyleTheme.insets,
-              child: MainButton(onPressed:() => Navigator.pop(context),text: "Back", style: "gray"),
+              child: PrimaryButton(onPressed:() => Navigator.pop(context),text: "Back", style: "gray"),
             ),
           ],
         ),

@@ -45,7 +45,7 @@ Widget build(BuildContext context) {
             ),
             Text(
               "Ready to see what's on the table?",
-              style: TextStyleTheme.subtitle,
+              style: TextStyleTheme.body,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 25),            
