@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
-
-class MainButton extends StatelessWidget {
+// PrimaryButton
+// For primary control buttons of the app
+// For example: Log-in, Sign-up Button
+class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
   final String style; // "red" or "gray"
 
-  const MainButton({
+  const PrimaryButton({
     super.key,
     required this.onPressed,
     required this.text,
