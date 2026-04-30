@@ -107,11 +107,11 @@ Widget build(BuildContext context) {
         
             Padding(
               padding: TextStyleTheme.insets,
-              child: MainButton(onPressed: () => print("Signup"), text: "Sign Up",  style: "red"),
+              child: PrimaryButton(onPressed: () => print("Signup"), text: "Sign Up",  style: "red"),
             ),
             Padding(
               padding: TextStyleTheme.insets,
-              child: MainButton(onPressed: () => Navigator.pop(context), text:"Back", style: "gray"),
+              child: PrimaryButton(onPressed: () => Navigator.pop(context), text:"Back", style: "gray"),
             ),
           ],
         ),
