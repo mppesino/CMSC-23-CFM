@@ -37,8 +37,8 @@ class LandingPage extends StatelessWidget {
                   ),
 
               Padding(padding: EdgeInsets.only(top:120), child: Column(children: [
-                Padding(padding: const EdgeInsets.all(6), child:MainButton(onPressed: () {Navigator.pushNamed(context, '/login');}, text: "Login", style:  "red")),
-                Padding(padding: const EdgeInsets.all(6), child:MainButton(onPressed:() {Navigator.pushNamed(context, '/signup');}, text: "Sign Up", style: "gray")),
+                Padding(padding: const EdgeInsets.all(6), child:PrimaryButton(onPressed: () {Navigator.pushNamed(context, '/login');}, text: "Login", style:  "red")),
+                Padding(padding: const EdgeInsets.all(6), child:PrimaryButton(onPressed:() {Navigator.pushNamed(context, '/signup');}, text: "Sign Up", style: "gray")),
 
               ],))
         ])
