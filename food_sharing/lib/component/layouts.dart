@@ -36,8 +36,9 @@ class FullHeightColumn extends StatelessWidget {
 // If contents of the column doesn't fit, it scrolls
 class CenteredColumn extends StatelessWidget {
   final List<Widget> children;
+  final MainAxisAlignment mainAxisAlignment;
 
-  const CenteredColumn({super.key, required this.children});
+  const CenteredColumn({super.key, required this.children, this.mainAxisAlignment = MainAxisAlignment.center});
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +47,13 @@ class CenteredColumn extends StatelessWidget {
         return SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: mainAxisAlignment,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: children,
               ),
             ),
-          ),
         );
       },
     );

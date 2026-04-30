@@ -12,7 +12,7 @@ class SectionCard extends StatelessWidget {
   const SectionCard({
     super.key,
     required this.children,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.crossAxisAlignment = CrossAxisAlignment.stretch,
   });
 
   @override

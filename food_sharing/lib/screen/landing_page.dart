@@ -18,7 +18,9 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
       return Scaffold(
-        body: CenteredColumn(children: [
+        body:SizedBox.expand(
+        child:
+         CenteredColumn(  children: [
               FaIcon(
                 FontAwesomeIcons.bowlFood,      
                 color: BrandColors.darkGreen, 
@@ -30,10 +32,10 @@ class LandingPage extends StatelessWidget {
                 textAlign: TextAlign.center
               ),
               Text(subtitle[0],
-                  style: TextStyleTheme.subtitle
+                  style: TextStyleTheme.body
                   ),
               Text(subtitle[1],
-                  style: TextStyleTheme.subtitle
+                  style: TextStyleTheme.body
                   ),
 
               Padding(padding: EdgeInsets.only(top:120), child: Column(children: [
@@ -43,6 +45,7 @@ class LandingPage extends StatelessWidget {
               ],))
         ])
         
+      )
       );
 
   }
