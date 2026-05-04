@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/auth_gate.dart';
 import 'package:food_sharing/screen/app_frame.dart';
-import 'package:food_sharing/screen/auth/login_page.dart';
-import 'package:food_sharing/screen/auth/signup_page.dart';
-import 'package:food_sharing/screen/auth/welcome.dart';
+import 'package:food_sharing/screen/landing_page.dart';
+import 'package:food_sharing/screen/login_page.dart';
+import 'package:food_sharing/screen/search_page.dart';
+import 'package:food_sharing/screen/signup_page.dart';
+import 'package:food_sharing/screen/welcome.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
@@ -46,6 +48,7 @@ class FoodSharing extends StatelessWidget {
         "/signup": (context) => SignupPage(title: appTitle),
         "/welcome": (context) => WelcomeScreen(),
         "/app_frame": (context) => AppFrame(),
+        "/search": (context) => SearchPage()
       },
 
     );
