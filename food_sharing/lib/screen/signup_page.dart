@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/component/sections.dart';
@@ -20,17 +19,10 @@ Widget build(BuildContext context) {
   return Scaffold(
     body: FullHeightColumn(children: [
       const SizedBox(height: 40),
-      FaIcon(
-        FontAwesomeIcons.bowlFood,
-        color: BrandColors.darkGreen,
-        size: 100.0,
+      Image.asset(
+        'assets/salologo.png',
+        height: 65,
       ),
-      Text(
-        widget.title,
-        style: TextStyleTheme.titleSmall,
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(height: 20),
 
       Expanded(
           child:Padding(
