@@ -2,8 +2,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
-import 'package:food_sharing/screen/landing_page.dart';
-import 'package:food_sharing/screen/welcome.dart';
+import 'package:food_sharing/screen/auth/landing_page.dart';
+import 'package:food_sharing/screen/auth/welcome.dart';
 
 import "package:provider/provider.dart";
 

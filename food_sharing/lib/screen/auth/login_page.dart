@@ -47,10 +47,8 @@ Widget build(BuildContext context) {
         height: 100,
       ),
 
-    Form( key:_loginFormKey, 
-          child:              
       Expanded(
-          child:Padding(
+          child:Form(key: _loginFormKey, child:Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: SectionCard(
           children: [

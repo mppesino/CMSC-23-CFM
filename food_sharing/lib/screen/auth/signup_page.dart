@@ -64,9 +64,8 @@ Widget build(BuildContext context) {
         'assets/salologo1.png',
         height: 100,
       ),
-      Form(key: _signupFormKey, child: 
       Expanded(
-          child:Padding(
+          child:Form(key: _signupFormKey, child:Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: SectionCard(
           children: [
