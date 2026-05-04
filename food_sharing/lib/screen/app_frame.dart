@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/screen/profile_page.dart';
+import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 class AppFrame extends StatefulWidget {
@@ -16,7 +17,7 @@ class AppFrameState extends State<AppFrame> {
   // These are the widgets for each tab
   final List<Widget> _pages = [
     const Center(child: Text("Home")),    
-    const Center(child: Text("Search")),  
+    const SearchPage(),  
     ProfilePage(userID: "123456"), 
   ];
 
