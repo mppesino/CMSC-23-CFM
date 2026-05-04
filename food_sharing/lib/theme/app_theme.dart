@@ -30,6 +30,7 @@ ThemeData appTheme() {
 }
 
 class BrandColors {
+  static const green = Color.fromARGB(255, 19, 124, 53);
   static const darkGreen = Color.fromARGB(255, 9, 46, 21);
   static const mediumGreen = Color.fromARGB(255, 88, 129, 87);
   static const cream =  Color(0xFFFFFAEE);

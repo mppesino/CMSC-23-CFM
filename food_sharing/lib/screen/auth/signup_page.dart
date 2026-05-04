@@ -114,7 +114,7 @@ class SignupPageState extends State<SignupPage> {
                               padding: TextStyleTheme.insets,
                               child: TextFormField(
                                 controller: _fnameController,
-                                cursorColor: BrandColors.darkGreen,
+                                cursorColor: BrandColors.green,
                                 decoration: TextStyleTheme.textInput(label: "First Name"),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {

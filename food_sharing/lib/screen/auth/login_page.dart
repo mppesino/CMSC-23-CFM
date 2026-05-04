@@ -74,7 +74,7 @@ class LoginPageState extends State<LoginPage> {
                         padding: TextStyleTheme.insets,
                         child: TextFormField(
                           controller: _emailController,
-                          cursorColor: BrandColors.darkGreen,
+                          cursorColor: BrandColors.green,
                           decoration: TextStyleTheme.textInput(
                             label: "Email",
                             prefixIcon: const Icon(Icons.mail_outline),

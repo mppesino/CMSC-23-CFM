@@ -38,7 +38,7 @@ class AppFrameState extends State<AppFrame> {
       body: _pages[_selectedIndex], // Shows the page based on the index
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: BrandColors.darkGreen,
+        selectedItemColor: BrandColors.green,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
