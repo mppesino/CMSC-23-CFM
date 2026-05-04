@@ -18,7 +18,6 @@ class UsersProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ FIXED: use getUserOnce instead of stream
   Future<User?> getUserById(String uid) async {
     try {
       DocumentSnapshot doc = await firebaseService.getUserOnce(uid);
@@ -26,7 +25,7 @@ class UsersProvider with ChangeNotifier {
       if (doc.exists && doc.data() != null) {
         return User.fromJson(
           doc.data() as Map<String, dynamic>
-            ..['userId'] = doc.id, // ✅ correct field
+            ..['userId'] = doc.id, 
         );
       }
       return null;
