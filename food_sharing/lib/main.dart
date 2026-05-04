@@ -21,7 +21,6 @@ void main() async {
 
   runApp(
 
-    
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
