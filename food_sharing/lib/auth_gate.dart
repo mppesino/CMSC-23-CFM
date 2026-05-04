@@ -35,7 +35,6 @@ class AuthGateState extends State<AuthGate>{
       builder: (context, snapshot) {
 
         if (authProvider.isRegistering) {
-          print("Registering!");
           return LandingPage(            
             title: widget.title,
             subtitle: widget.subtitle,
@@ -51,14 +50,12 @@ class AuthGateState extends State<AuthGate>{
             child: CircularProgressIndicator(),
           );
         } else if (!snapshot.hasData) {
-          print("No data!");
           return LandingPage(            
             title: widget.title,
             subtitle: widget.subtitle,
         );
         }
 
-        print("App frame time");
         return const AppFrame(); // or your main home
       },
     );
