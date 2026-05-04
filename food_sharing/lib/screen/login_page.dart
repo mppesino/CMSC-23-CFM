@@ -21,8 +21,8 @@ Widget build(BuildContext context) {
     body: FullHeightColumn(children: [
       const SizedBox(height: 40),
       Image.asset(
-        'assets/salologo.png',
-        height: 65,
+        'assets/salologo1.png',
+        height: 100,
       ),
 
       Expanded(

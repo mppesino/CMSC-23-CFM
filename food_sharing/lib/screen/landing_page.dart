@@ -19,7 +19,7 @@ class LandingPage extends StatelessWidget {
         child:
          CenteredColumn(  children: [
               Image.asset(
-                'assets/salologo1.png',
+                'assets/salologo.png',
                 height: 280,
               ),
               Padding(padding: EdgeInsets.only(top:30), child: Column(children: [
