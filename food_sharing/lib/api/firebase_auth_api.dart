@@ -28,7 +28,7 @@ class FirebaseAuthAPI {
         email: email,
         password: password,
       );
-      await credential.user?.updateDisplayName(firstName);
+      await credential.user?.updateDisplayName(userName);
 
       await FirebaseFirestore.instance.collection('users').doc(credential.user!.uid).set({
             'firstName': firstName,
@@ -37,7 +37,9 @@ class FirebaseAuthAPI {
             'email': email,
             'createdAt': FieldValue.serverTimestamp(), 
             'userId': credential.user!.uid,
-          });
+      });
+
+      print("Created user and stored instance!");
 
       await auth.signOut(); // Sign out user after signing up so they need to log in again
 

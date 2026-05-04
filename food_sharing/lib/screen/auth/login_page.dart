@@ -17,6 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
 
+  bool _isLoading = false;
+
   final _loginFormKey = GlobalKey<FormState>();
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -36,103 +38,151 @@ class LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          FullHeightColumn(children: [
+            const SizedBox(height: 40),
+            Image.asset(
+              'assets/salologo1.png',
+              height: 100,
+            ),
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: FullHeightColumn(children: [
-      const SizedBox(height: 40),
-      Image.asset(
-        'assets/salologo1.png',
-        height: 100,
-      ),
+            Expanded(
+              child: Form(
+                key: _loginFormKey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: SectionCard(
+                    children: [
+                      const SizedBox(height: 20),
+                      Text(
+                        "Namiss ka namin!",
+                        style: TextStyleTheme.heading,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        "Hungry for more?",
+                        style: TextStyleTheme.body,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 100),
 
-      Expanded(
-          child:Form(key: _loginFormKey, child:Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: SectionCard(
-          children: [
+                      Padding(
+                        padding: TextStyleTheme.insets,
+                        child: TextFormField(
+                          controller: _emailController,
+                          cursorColor: BrandColors.darkGreen,
+                          decoration: TextStyleTheme.textInput(
+                            label: "Email",
+                            prefixIcon: const Icon(Icons.mail_outline),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter an email';
+                            }
+                            if (!EmailValidator.validate(value)) {
+                              return 'Please enter a valid email address';
+                            }
+                            if (_firebaseErrorCode == 'too-many-requests') {
+                              return 'Too many requests. Please try again later';
+                            }
+                            if (_firebaseErrorCode != null) {
+                              return 'Wrong email or password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+
+                      Padding(
+                        padding: TextStyleTheme.insets,
+                        child: TextFormField(
+                          controller: _passwordController,
+                          cursorColor: BrandColors.darkGreen,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: TextStyleTheme.textInput(label: "Password"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 125),
+
+                      Padding(
+                        padding: TextStyleTheme.insets,
+                        child: PrimaryButton(
+                          onPressed: submit,
+                          text: "Login",
+                          style: "red",
+                        ),
+                      ),
+
+                      Padding(
+                        padding: TextStyleTheme.insets,
+                        child: PrimaryButton(
+                          onPressed: () => Navigator.pop(context),
+                          text: "Back",
+                          style: "gray",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 20),
-            Text(
-              "Namiss ka namin!",
-              style: TextStyleTheme.heading,
-              textAlign: TextAlign.center,
+          ]),
+
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.4),
+              child: const Center(
+                child: CircularProgressIndicator(color: BrandColors.mediumGreen,),
+              ),
             ),
-            Text(
-              "Hungry for more?",
-              style: TextStyleTheme.body,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 100),
-            Padding(
-              padding: TextStyleTheme.insets,
-              child:
-              TextFormField(
-              controller: _emailController,
-              cursorColor: BrandColors.darkGreen,
-              decoration: TextStyleTheme.textInput(label: "Email", prefixIcon: const Icon(Icons.mail_outline)),
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Please enter an email';
-                if (!EmailValidator.validate(value)) return 'Please enter a valid email address'; // Simple email validation
-                if(_firebaseErrorCode == 'too-many-requests') return 'Too many requests. Please try again later';
-                if(_firebaseErrorCode != null) return 'Wrong email or password';
-
-                return null;
-              }
-            )),
-            Padding(
-              padding: TextStyleTheme.insets,
-              child:
-              TextFormField(
-              controller: _passwordController,
-              cursorColor: BrandColors.darkGreen,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: TextStyleTheme.textInput(label: "Password"),
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Please enter a password';
-                return null;
-              }
-            )),
-            
-            const SizedBox(height: 125), 
-        
-            Padding(
-              padding: TextStyleTheme.insets,
-              child: PrimaryButton(onPressed: submit, text:  "Login", style: "red"),
-            ),
-            Padding(
-              padding: TextStyleTheme.insets,
-              child: PrimaryButton(onPressed:() => Navigator.pop(context),text: "Back", style: "gray"),
-            ),
-          ],
-        ),
-      ))),
-      const SizedBox(height: 20), 
-    ]),
-  );
-}
-
-  void submit() async{
-      if (_loginFormKey.currentState!.validate()) {
-
-      final authProvider = context.read<AppAuthProvider>();
-      String? code = await authProvider.signIn(_emailController.text, _passwordController.text);
-
-        if (code != null){                      
-          
-          setState(() {
-              _firebaseErrorCode = code;
-          });    // If there is error code, set error code and validate again
-
-          _loginFormKey.currentState!.validate();                      
-          return;
-
-        }
-
-      }
-
+        ],
+      ),
+    );
   }
 
+  void submit() async {
+    if (!_loginFormKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final authProvider = context.read<AppAuthProvider>();
+    String? code = await authProvider.signIn(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (code != null) {
+      setState(() {
+        _firebaseErrorCode = code;
+      });
+
+      _loginFormKey.currentState!.validate();
+      return;
+    }
+
+    Navigator.pop(context);
+  }
 }

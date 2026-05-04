@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/auth_gate.dart';
 import 'package:food_sharing/screen/app_frame.dart';
-import 'package:food_sharing/screen/auth/landing_page.dart';
 import 'package:food_sharing/screen/auth/login_page.dart';
 import 'package:food_sharing/screen/auth/signup_page.dart';
 import 'package:food_sharing/screen/auth/welcome.dart';
@@ -11,20 +10,18 @@ import 'package:food_sharing/provider/auth_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() async {
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   runApp(
-
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => AppAuthProvider(),
+          create: (context) => AppAuthProvider(),
         ),
       ],
       child: const FoodSharing(),
@@ -44,7 +41,7 @@ class FoodSharing extends StatelessWidget {
       theme: appTheme(),
       initialRoute: "/",
       routes:{
-        '/': (context) => const AuthGate(title: appTitle, subtitle: appSubtitle),
+        '/': (context) => AuthGate(title: appTitle, subtitle: appSubtitle),
         "/login": (context) => LoginPage(title: appTitle),
         "/signup": (context) => SignupPage(title: appTitle),
         "/welcome": (context) => WelcomeScreen(),

@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'salo-8694a.firebaseapp.com',
     storageBucket: 'salo-8694a.firebasestorage.app',
   );
+
 }
