@@ -7,7 +7,7 @@ import 'package:food_sharing/theme/app_theme.dart';
 
 class LoginPage extends StatefulWidget {
   final String title;
-  LoginPage({super.key, required this.title});
+  const LoginPage({super.key, required this.title});
 
   @override 
   LoginPageState createState() => LoginPageState();
@@ -69,7 +69,7 @@ Widget build(BuildContext context) {
         
             Padding(
               padding: TextStyleTheme.insets,
-              child: PrimaryButton(onPressed: () => Navigator.pushNamed(context, '/app_frame'), text:  "Login", style: "red"),
+              child: PrimaryButton(onPressed: () => Navigator.pushNamed(context, '/welcome'), text:  "Login", style: "red"),
             ),
             Padding(
               padding: TextStyleTheme.insets,

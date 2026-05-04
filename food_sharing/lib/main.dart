@@ -3,6 +3,7 @@ import 'package:food_sharing/screen/app_frame.dart';
 import 'package:food_sharing/screen/landing_page.dart';
 import 'package:food_sharing/screen/login_page.dart';
 import 'package:food_sharing/screen/signup_page.dart';
+import 'package:food_sharing/screen/welcome.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 void main() {
@@ -24,6 +25,7 @@ class FoodSharing extends StatelessWidget {
         '/': (context) => const LandingPage(title: appTitle, subtitle: appSubtitle),
         "/login": (context) => LoginPage(title: appTitle),
         "/signup": (context) => SignupPage(title: appTitle),
+        "/welcome": (context) => WelcomeScreen(),
         "/app_frame": (context) => AppFrame(),
       },
 
