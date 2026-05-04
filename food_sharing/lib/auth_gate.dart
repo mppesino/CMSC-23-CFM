@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
 import 'package:food_sharing/screen/auth/landing_page.dart';
 import 'package:food_sharing/screen/auth/welcome.dart';
+import 'package:food_sharing/screen/app_frame.dart';
 
 import "package:provider/provider.dart";
 
@@ -31,28 +32,33 @@ class AuthGateState extends State<AuthGate>{
     final authProvider = context.watch<AppAuthProvider>();
     Stream<User?> userStream = context.watch<AppAuthProvider>().uStream;
     
-    return StreamBuilder( // Show different screen depending on if user is logged in or not
+    return StreamBuilder<User?>(
       stream: userStream,
-      builder: (context, snapshot){
+      builder: (context, snapshot) {
 
-          if (authProvider.isRegistering) {
-            return LandingPage(title: widget.title, subtitle: widget.subtitle,);
-          }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData) {
-            return LandingPage(title: widget.title, subtitle: widget.subtitle,);
-          }
-          return const WelcomeScreen();
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(child: Text("Error: ${snapshot.error}")),
+          );
+        }
+
+        final user = snapshot.data;
+
+        if (user == null) {
+          return LandingPage(
+            title: widget.title,
+            subtitle: widget.subtitle,
+          );
+        }
+
+        return const AppFrame(); // or your main home
       },
-
     );
   }
 }
