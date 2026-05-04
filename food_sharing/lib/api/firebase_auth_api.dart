@@ -22,7 +22,7 @@ class FirebaseAuthAPI {
     return null;
   }
 
-  Future<String?> signUp(String firstName, String lastName, String email, String password) async {
+  Future<String?> signUp(String firstName, String lastName, String userName, String email, String password) async {
     try{
       UserCredential credential =  await auth.createUserWithEmailAndPassword(
         email: email,
@@ -33,12 +33,13 @@ class FirebaseAuthAPI {
       await FirebaseFirestore.instance.collection('users').doc(credential.user!.uid).set({
             'firstName': firstName,
             'lastName': lastName,
+            'userName': userName,
             'email': email,
             'createdAt': FieldValue.serverTimestamp(), 
             'userId': credential.user!.uid,
           });
 
-    await auth.signOut(); // Sign out user after signing up so they need to log in again
+      await auth.signOut(); // Sign out user after signing up so they need to log in again
 
     } on FirebaseAuthException catch (e) {
       return e.code;  // return error code for firebase errors

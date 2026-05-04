@@ -30,11 +30,11 @@ class AppAuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> signUp(String firstName, String lastName, String email, String password) async {
+  Future<String?> signUp(String firstName, String lastName, String userName, String email, String password) async {
     String? code;
     try {
        _isRegistering = true;  // Prevent sign-up page going to homepage when pressing back (this shows null user)
-        code = await authService.signUp(firstName, lastName, email, password);
+        code = await authService.signUp(firstName, lastName, userName, email, password);
     } finally {
       _isRegistering = false; 
       notifyListeners();

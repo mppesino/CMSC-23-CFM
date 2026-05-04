@@ -219,7 +219,7 @@ void submit() async{
       if (_signupFormKey.currentState!.validate()) {
 
         final authProvider = context.read<AppAuthProvider>();
-        String? code = await authProvider.signUp(_fnameController.text, _lnameController.text, _emailController.text, _passwordController.text);
+        String? code = await authProvider.signUp(_fnameController.text, _lnameController.text, _userNameController.text, _emailController.text, _passwordController.text);
 
         if (code != null){                      
           
@@ -234,7 +234,7 @@ void submit() async{
         if (!mounted) return;
 
         Navigator.pop(context);
-        
+        print(Navigator.canPop(context));
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Account created! Please log in.")),
         );

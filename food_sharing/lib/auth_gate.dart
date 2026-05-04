@@ -36,25 +36,26 @@ class AuthGateState extends State<AuthGate>{
       stream: userStream,
       builder: (context, snapshot) {
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+        if (authProvider.isRegistering) {
+          return LandingPage(            
+            title: widget.title,
+            subtitle: widget.subtitle,
+        );
         }
 
         if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(child: Text("Error: ${snapshot.error}")),
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
           );
-        }
-
-        final user = snapshot.data;
-
-        if (user == null) {
-          return LandingPage(
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return LandingPage(            
             title: widget.title,
             subtitle: widget.subtitle,
-          );
+        );
         }
 
         return const AppFrame(); // or your main home
