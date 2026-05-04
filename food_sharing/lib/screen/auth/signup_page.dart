@@ -234,7 +234,6 @@ void submit() async{
         if (!mounted) return;
 
         Navigator.pop(context);
-        print(Navigator.canPop(context));
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Account created! Please log in.")),
         );
