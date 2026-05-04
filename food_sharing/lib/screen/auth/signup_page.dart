@@ -201,7 +201,7 @@ Widget build(BuildContext context) {
         
             Padding(
               padding: TextStyleTheme.insets,
-              child: PrimaryButton(onPressed: () => submit, text: "Sign Up",  style: "red"),
+              child: PrimaryButton(onPressed: submit, text: "Sign Up",  style: "red"),
             ),
             Padding(
               padding: TextStyleTheme.insets,
