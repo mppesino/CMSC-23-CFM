@@ -20,17 +20,10 @@ Widget build(BuildContext context) {
   return Scaffold(
     body: FullHeightColumn(children: [
       const SizedBox(height: 40),
-      FaIcon(
-        FontAwesomeIcons.bowlFood,
-        color: BrandColors.darkGreen,
-        size: 100.0,
+      Image.asset(
+        'assets/salologo1.png',
+        height: 100,
       ),
-      Text(
-        widget.title,
-        style: TextStyleTheme.titleSmall,
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(height: 20),
 
       Expanded(
           child:Padding(
