@@ -32,7 +32,9 @@ class FirebaseUsersApi {
   Future<String> editUser(String uid, Map<String, dynamic> user) async {
     try {
       await db.collection('users').doc(uid).update({
-        'name': user['name'],
+        'firstName': user['firstName'],
+        'lastName': user['lastName'],
+        'userName': user['userName'],
         'bio': user['bio'],
         'profile_picture': user['profile_picture'],
         'tags': user['tags'],
