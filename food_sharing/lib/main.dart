@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/auth_gate.dart';
 import 'package:food_sharing/screen/app_frame.dart';
-import 'package:food_sharing/screen/auth/landing_page.dart';
 import 'package:food_sharing/screen/auth/login_page.dart';
 import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/screen/auth/signup_page.dart';
