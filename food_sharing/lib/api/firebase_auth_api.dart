@@ -38,6 +38,8 @@ class FirebaseAuthAPI {
             'userId': credential.user!.uid,
           });
 
+    await auth.signOut(); // Sign out user after signing up so they need to log in again
+
     } on FirebaseAuthException catch (e) {
       return e.code;  // return error code for firebase errors
     } catch (e) {
