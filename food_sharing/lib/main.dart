@@ -5,9 +5,20 @@ import 'package:food_sharing/screen/auth/login_page.dart';
 import 'package:food_sharing/screen/auth/signup_page.dart';
 import 'package:food_sharing/screen/auth/welcome.dart';
 import 'package:food_sharing/theme/app_theme.dart';
+import 'package:provider/provider.dart';
+import 'package:food_sharing/provider/auth_provider.dart';
 
 void main() {
-  runApp(FoodSharing());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AppAuthProvider(),
+        ),
+      ],
+      child: const FoodSharing(),
+    ),
+  );
 }
 
 class FoodSharing extends StatelessWidget {
