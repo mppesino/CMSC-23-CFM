@@ -102,7 +102,7 @@ Widget build(BuildContext context) {
         
             Padding(
               padding: TextStyleTheme.insets,
-              child: PrimaryButton(onPressed: () => Navigator.pushNamed(context, '/welcome'), text:  "Login", style: "red"),
+              child: PrimaryButton(onPressed: () => submit, text:  "Login", style: "red"),
             ),
             Padding(
               padding: TextStyleTheme.insets,
