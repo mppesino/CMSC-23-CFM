@@ -74,9 +74,9 @@ class UsersProvider with ChangeNotifier {
         profilePicture: _currentUser!.profilePicture,
         isOnboarded: user['isOnboarded'] ?? _currentUser!.isOnboarded,
         tags: user['tags'] != null
-            ? Map<String, String>.from(user['tags'])
+            ? List<String>.from(user['tags'])
             : _currentUser!.tags,
-      );
+        );
     }
 
     notifyListeners();

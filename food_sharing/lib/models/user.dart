@@ -7,7 +7,7 @@ class User {
   String? bio;
   String? profilePicture;
   bool isOnboarded;
-  Map<String, String>? tags;
+  List<String>? tags;
 
   User({
     required this.userId,
@@ -32,9 +32,9 @@ class User {
       profilePicture: json['profilePicture'],
       isOnboarded: json['isOnboarded'] ?? false,
       tags: json['tags'] != null
-          ? Map<String, String>.from(json['tags'])
+          ? List<String>.from(json['tags'])
           : null,
-    );
+        );
   }
 
   Map<String, dynamic> toJson() {

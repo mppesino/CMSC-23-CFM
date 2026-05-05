@@ -26,23 +26,15 @@ class FirebaseUsersApi {
     return await db.collection('users').doc(uid).get();
   }
 
-  Future<String> editUser(String uid, Map<String, dynamic> user) async {
+  Future<String> editUser(String uid, Map<String, dynamic> updates) async {
     try {
-      await db.collection('users').doc(uid).update({
-        'firstName': user['firstName'],
-        'lastName': user['lastName'],
-        'userName': user['userName'],
-        'bio': user['bio'],
-        'profile_picture': user['profile_picture'],
-        'tags': user['tags'],
-      });
-
-      return "Successfully updated user!";
-    } on FirebaseException catch (e) {
-      return "Error on ${e.code}: ${e.message}";
+      await db.collection('users').doc(uid).update(updates);
+      return "Updated user successfully!";
+    } catch (e) {
+      return "Error: $e";
     }
   }
-
+  
   Future<String> deleteUser(String uid) async {
     try {
       await db.collection('users').doc(uid).delete();
