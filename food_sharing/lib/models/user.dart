@@ -6,6 +6,7 @@ class User {
   String userName;
   String? bio;
   String? profilePicture;
+  bool isOnboarded;
   Map<String, String>? tags;
 
   User({
@@ -16,6 +17,7 @@ class User {
     required this.userName,
     this.bio,
     this.profilePicture,
+    required this.isOnboarded,
     this.tags,
   });
 
@@ -28,6 +30,7 @@ class User {
       userName: json['userName'],
       bio: json['bio'],
       profilePicture: json['profilePicture'],
+      isOnboarded: json['isOnboarded'] ?? false,
       tags: json['tags'] != null
           ? Map<String, String>.from(json['tags'])
           : null,
@@ -43,6 +46,7 @@ class User {
       'userName': userName,
       'bio': bio,
       'profilePicture': profilePicture,
+      'isOnboarded': isOnboarded,
       'tags': tags,
     };
   }

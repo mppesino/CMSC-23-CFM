@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/auth_gate.dart';
+import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/app_frame.dart';
 import 'package:food_sharing/screen/auth/login_page.dart';
 import 'package:food_sharing/screen/search_page.dart';
@@ -24,6 +25,22 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) => AppAuthProvider(),
         ),
+        ChangeNotifierProxyProvider<AppAuthProvider, UsersProvider>(
+        create: (_) => UsersProvider(),
+        update: (_, authProvider, usersProvider) {
+          final uid = authProvider.user?.uid;
+
+          if (uid != null) {
+            if (usersProvider!.currentUser?.userId != uid) {
+              usersProvider.loadUser(uid);
+            }
+          } else {
+            usersProvider!.clearUser();
+          }
+
+          return usersProvider!;
+        },
+      ),
       ],
       child: const FoodSharing(),
     ),

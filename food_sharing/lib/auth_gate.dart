@@ -1,9 +1,14 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food_sharing/api/firebase_users_api.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
+import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/auth/landing_page.dart';
 import 'package:food_sharing/screen/app_frame.dart';
+import 'package:food_sharing/screen/auth/welcome.dart';
+import 'package:food_sharing/theme/app_theme.dart';
 
 import "package:provider/provider.dart";
 
@@ -30,34 +35,40 @@ class AuthGateState extends State<AuthGate>{
     final authProvider = context.watch<AppAuthProvider>();
     Stream<User?> userStream = context.watch<AppAuthProvider>().uStream;
     
-    return StreamBuilder(
-      stream: userStream,
-      builder: (context, snapshot) {
+return StreamBuilder(
+  stream: userStream,
+  builder: (context, snapshot) {
 
-        if (authProvider.isRegistering) {
-          return LandingPage(            
-            title: widget.title,
-            subtitle: widget.subtitle,
-        );
-        }
+    if (authProvider.isRegistering) {
+      return LandingPage(            
+        title: widget.title,
+        subtitle: widget.subtitle,
+      );
+    }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Text("Error encountered! ${snapshot.error}"),
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (!snapshot.hasData) {
-          return LandingPage(            
-            title: widget.title,
-            subtitle: widget.subtitle,
-        );
-        }
+    if (snapshot.hasError) {
+      return Center(
+        child: Text("Error encountered! ${snapshot.error}"),
+      );
+    } else if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(
+        child: CircularProgressIndicator(color: BrandColors.green),
+      );
+    } else if (!snapshot.hasData) {
+      return LandingPage(            
+        title: widget.title,
+        subtitle: widget.subtitle,
+      );
+    }
 
-        return const AppFrame(); // or your main home
-      },
-    );
+    final user = context.watch<UsersProvider>().currentUser;
+
+    if (user == null || !user.isOnboarded) {
+      return const WelcomeScreen();
+    }
+
+    return const AppFrame();
+  },
+);
   }
 }

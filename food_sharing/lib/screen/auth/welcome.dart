@@ -1,6 +1,8 @@
 // this file is for the welcome page after clicking log in
 
 import 'package:flutter/material.dart';
+import 'package:food_sharing/provider/users_provider.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -10,7 +12,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  // tracks the tag the user selected
   final Set<String> selectedTags = {};
 
   // dietary restriction options
@@ -35,9 +36,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   // switch screen after pressing continue
-  void _onContinue() {
-    // TODO: save _selectedTags to user profile before navigating
-    Navigator.pushReplacementNamed(context, '/app_frame');
+  void _onContinue() async {
+    final userProvider = context.read<UsersProvider>();
+    final user = userProvider.currentUser;
+    if (user == null) return;
+
+    if (selectedTags.isEmpty) return;
+
+    final tagMap = {
+      for (final tag in selectedTags) tag: tag,
+    };
+
+    await userProvider.editUser(user.userId!, {
+      'tags': tagMap,
+      'isOnboarded': true,
+    });
   }
 
   @override

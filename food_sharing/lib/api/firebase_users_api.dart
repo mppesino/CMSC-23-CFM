@@ -3,9 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseUsersApi {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Stream<DocumentSnapshot> getUser(String uid) {
-    return db.collection('users').doc(uid).snapshots();
-  }
 
   Stream<QuerySnapshot> getAllUsers() {
     return db.collection('users').snapshots();
@@ -25,7 +22,7 @@ class FirebaseUsersApi {
     }
   }
 
-  Future<DocumentSnapshot> getUserOnce(String uid) async {
+  Future<DocumentSnapshot> getUser(String uid) async {
     return await db.collection('users').doc(uid).get();
   }
 

@@ -36,12 +36,11 @@ class FirebaseAuthAPI {
             'userName': userName,
             'email': email,
             'createdAt': FieldValue.serverTimestamp(), 
+            'isOnboarded': false,
             'userId': credential.user!.uid,
       });
 
       print("Created user and stored instance!");
-
-      await auth.signOut(); // Sign out user after signing up so they need to log in again
 
     } on FirebaseAuthException catch (e) {
       return e.code;  // return error code for firebase errors

@@ -7,6 +7,10 @@ class UsersProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _usersStream;
   final FirebaseUsersApi firebaseService = FirebaseUsersApi();
 
+  User? _currentUser;
+  User? get currentUser => _currentUser;
+
+
   UsersProvider() {
     fetchUsers();
   }
@@ -18,9 +22,24 @@ class UsersProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadUser(String uid) async {
+  try {
+    final user = await getUserById(uid);
+    _currentUser = user;
+    notifyListeners();
+  } catch (e) {
+    debugPrint("Error loading user: $e");
+  }
+  }
+
+  void clearUser() {
+  _currentUser = null;
+  notifyListeners();
+  }
+
   Future<User?> getUserById(String uid) async {
     try {
-      DocumentSnapshot doc = await firebaseService.getUserOnce(uid);
+      DocumentSnapshot doc = await firebaseService.getUser(uid);
 
       if (doc.exists && doc.data() != null) {
         return User.fromJson(
@@ -43,6 +62,26 @@ class UsersProvider with ChangeNotifier {
 
   Future<void> editUser(String uid, Map<String, dynamic> user) async {
     String message = await firebaseService.editUser(uid, user);
+
+    if (_currentUser != null && _currentUser!.userId == uid) {
+      _currentUser = User(
+        userId: _currentUser!.userId,
+        email: _currentUser!.email,
+        firstName: _currentUser!.firstName,
+        lastName: _currentUser!.lastName,
+        userName: _currentUser!.userName,
+        bio: _currentUser!.bio,
+        profilePicture: _currentUser!.profilePicture,
+        isOnboarded: user['isOnboarded'] ?? _currentUser!.isOnboarded,
+        tags: user['tags'] != null
+            ? Map<String, String>.from(user['tags'])
+            : _currentUser!.tags,
+      );
+    }
+
+    notifyListeners();
+
+
     debugPrint(message);
     notifyListeners();
   }
