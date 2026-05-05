@@ -25,30 +25,56 @@ class ProfilePageState extends State<ProfilePage> {
       Scaffold(body:
         CenteredColumn(mainAxisAlignment: MainAxisAlignment.start, children:[
         
-          SectionCard(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Row(children: [
-              Column(
-                children: [
-                    ProfilePicture(userID: widget.user?.userId ?? "",),
-                    Text(widget.user?.userName ?? "", style: TextStyleTheme.body,)
-                ],
-              ),
-              Column( crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("This is my bio!", style: TextStyleTheme.body),
-                  Text("Dietary Restrictions", style: TextStyleTheme.body),
-                  Text("Preferences", style: TextStyleTheme.body),
+          SectionCard(crossAxisAlignment: CrossAxisAlignment.stretch, color:BrandColors.white, children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        ProfilePicture(userID: widget.user?.userId ?? ""),
+                        Text(
+                          "@${widget.user?.userName ?? "user"}",
+                          style: TextStyleTheme.body,
+                        ),
+                      ],
+                    ),
 
-                ],
-              ),
+                    const SizedBox(width: 12),
 
-            ],)
-          ])
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("${widget.user?.firstName} ${widget.user?.lastName}", style: TextStyleTheme.subtitle_bold),
 
+                          Text("This is my bio!", style: TextStyleTheme.body),
+
+                          const SizedBox(height: 8),
+
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 4.0,
+                            children: (widget.user?.tags ?? [])
+                                .map(_buildTags)
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
       ])
-
-      )
+      ]))
     );
   }
 
+  Widget _buildTags(String label) {
+    return Chip(
+      label: Text(label, style: const TextStyle(fontSize: 12, color: Colors.white)),
+      backgroundColor: BrandColors.green,
+      shape: const StadiumBorder(), 
+      side: BorderSide.none,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+    );
+  }
 }

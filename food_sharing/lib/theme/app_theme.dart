@@ -65,9 +65,28 @@ class TextStyleTheme {
     height: 0.8,
   );
 
+  static final heading_white = GoogleFonts.sourGummy(
+    fontSize: 36,
+    fontWeight: FontWeight.w800,
+    color: BrandColors.white,
+    height: 0.8,
+  );
+
+  static final heading_white_md = GoogleFonts.sourGummy(
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    color: BrandColors.white,
+    height: 0.8,
+  );
   static final body = GoogleFonts.sourGummy(
     fontSize: 18,
     color: BrandColors.black
+  );
+
+  static final subtitle_bold = GoogleFonts.sourGummy(
+    fontSize: 22,
+    color: BrandColors.black,
+    fontWeight: FontWeight.bold
   );
 
   static final subtitle = GoogleFonts.sourGummy(

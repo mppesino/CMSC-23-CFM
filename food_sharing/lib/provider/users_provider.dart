@@ -9,7 +9,8 @@ class UsersProvider with ChangeNotifier {
 
   User? _currentUser;
   User? get currentUser => _currentUser;
-
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   UsersProvider() {
     fetchUsers();
@@ -24,8 +25,12 @@ class UsersProvider with ChangeNotifier {
 
   Future<void> loadUser(String uid) async {
   try {
+    _isLoading = true;
+    notifyListeners();
     final user = await getUserById(uid);
     _currentUser = user;
+
+    _isLoading = false;
     notifyListeners();
   } catch (e) {
     debugPrint("Error loading user: $e");

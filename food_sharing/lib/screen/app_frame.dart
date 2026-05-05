@@ -35,14 +35,19 @@ class AppFrameState extends State<AppFrame> {
     appBar: AppBar(
       leading: IconButton(
         icon: const Icon(Icons.add),
+        color: _selectedIndex != 0 ? BrandColors.white : BrandColors.black,
         onPressed: () {
           // Add your logic here
           print("Plus button tapped!");
         },
       ),
-      title: Text(_selectedIndex != 2 ? "Salo" : user?.userName ?? "User", style: _selectedIndex != 2 ? TextStyleTheme.heading : TextStyleTheme.subtitle), // Optional: your app title
-      centerTitle: true,         // Optional: keeps the title in the middle
-    ),      
+      title: Text(_selectedIndex != 2 ? "Salo" : user?.userName ?? "User", style: _selectedIndex == 1 ? TextStyleTheme.heading_white : _selectedIndex==2 ? TextStyleTheme.heading_white_md : TextStyleTheme.heading), // Optional: your app title
+      centerTitle: true, 
+      backgroundColor: _selectedIndex == 1
+      ? BrandColors.mediumGreen
+      : _selectedIndex == 2
+      ? BrandColors.mediumGreen
+      : BrandColors.cream,    ),      
       body: _pages[_selectedIndex], // Shows the page based on the index
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

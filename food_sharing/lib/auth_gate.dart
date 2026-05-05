@@ -38,6 +38,15 @@ class AuthGateState extends State<AuthGate>{
 return StreamBuilder(
   stream: userStream,
   builder: (context, snapshot) {
+    
+    final userProvider = context.watch<UsersProvider>();
+    if (userProvider.isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: BrandColors.green),
+        ),
+      );
+    }
 
     if (authProvider.isRegistering) {
       return LandingPage(            

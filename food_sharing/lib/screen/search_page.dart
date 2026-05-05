@@ -40,7 +40,7 @@ class _SearchPageState extends State<SearchPage>{
               Container(
                 width: double.infinity,
                 color: BrandColors.mediumGreen,
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                 child: _buildSearchBar()
               ),
               
@@ -52,6 +52,13 @@ class _SearchPageState extends State<SearchPage>{
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white, 
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                     borderRadius: BorderRadius.circular(20),
                   ),
 
@@ -98,6 +105,7 @@ class _SearchPageState extends State<SearchPage>{
         IntrinsicWidth(
           child: TextField(
             controller: _searchController,
+            cursorColor: BrandColors.black,
             decoration: const InputDecoration(hintText: "Search...", border: InputBorder.none, isDense: true),
             style: const TextStyle(fontSize: 14),
           ),
@@ -109,19 +117,26 @@ class _SearchPageState extends State<SearchPage>{
   );
 }
 
-  Widget _buildSection(String title, List<String> tags) {
-    return Column(
+Widget _buildSection(String title, List<String> tags) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 10),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-
-          //selected keywords are colored
           children: tags.map((tag) {
             final isSelected = _selectedKeywords.contains(tag);
+
             return GestureDetector(
               onTap: () => _toggleKeyword(tag),
               child: AnimatedContainer(
@@ -132,23 +147,21 @@ class _SearchPageState extends State<SearchPage>{
                   border: Border.all(color: BrandColors.mediumGreen),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text(tag, style: TextStyle(
-                  fontSize: 13, 
-                  color: isSelected ? Colors.white : BrandColors.mediumGreen)
+                child: Text(
+                  tag,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isSelected
+                        ? Colors.white
+                        : BrandColors.mediumGreen,
+                  ),
                 ),
               ),
             );
           }).toList(),
-
         ),
         const SizedBox(height: 20),
       ],
-    );
-  }
-
-
-}
-
-
-
-
+    ),
+  );
+}}
