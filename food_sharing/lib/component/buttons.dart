@@ -20,12 +20,13 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isRed = style == "red";
-    
+    final bool isYellow = style == "yellow";
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: isRed ? BrandColors.red : BrandColors.gray,
-        foregroundColor: isRed ? BrandColors.white : BrandColors.black,
+        backgroundColor: isRed ? BrandColors.red : isYellow ? BrandColors.yellow : BrandColors.gray,
+        foregroundColor: isRed ? BrandColors.white : isYellow ? BrandColors.darkYellow : BrandColors.black,
         elevation: 0,
         minimumSize: const Size(200, 50),
         shape: RoundedRectangleBorder(

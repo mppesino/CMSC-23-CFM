@@ -37,6 +37,7 @@ class BrandColors {
   static const red = Color.fromARGB(255, 193, 18, 31);
   static const darkRed = Color.fromARGB(255, 141, 16, 24);
   static const yellow = Color.fromARGB(255, 246, 189, 96);
+  static const darkYellow = Color.fromARGB(255, 102, 72, 24);
   static const black = Colors.black;
   static const white = Colors.white;
   static const gray = Color.fromARGB(255, 196, 194, 192);
@@ -102,7 +103,6 @@ class TextStyleTheme {
     fontWeight: FontWeight.w400,
     color: BrandColors.black
   );
-
 
   static final button = GoogleFonts.sourGummy(    
     fontSize: 18,

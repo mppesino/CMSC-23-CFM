@@ -11,10 +11,14 @@ class SignupPage extends StatefulWidget {
   final String title;
   final List<String> subtitle;
 
-  SignupPage({super.key, required this.title, required this.subtitle});
+  const SignupPage({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
 
-  @override 
-  SignupPageState createState() => SignupPageState();
+  @override
+  State<SignupPage> createState() => SignupPageState();
 }
 
 class SignupPageState extends State<SignupPage> {
@@ -29,7 +33,9 @@ class SignupPageState extends State<SignupPage> {
   late TextEditingController _passwordController;
   late TextEditingController _confirmController;
 
-  String? _firebaseErrorCode;
+  // Firebase UI errors (separate from validators)
+  String? _emailError;
+  String? _passwordError;
 
   @override
   void initState() {
@@ -59,189 +65,212 @@ class SignupPageState extends State<SignupPage> {
     return Scaffold(
       body: Stack(
         children: [
-          FullHeightColumn(children: [
-            const SizedBox(height: 40),
+          FullHeightColumn(
+            children: [
+              const SizedBox(height: 40),
 
-            SaloHeader(title: widget.title, subtitle: widget.subtitle),
+              SaloHeader(
+                title: widget.title,
+                subtitle: widget.subtitle,
+              ),
 
-            Expanded(
-              child: Form(
-                key: _signupFormKey,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: SectionCard(
-                    children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        "Tara, kain!",
-                        style: TextStyleTheme.heading,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        "Ready to see what's on the table?",
-                        style: TextStyleTheme.body,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 25),
+              Expanded(
+                child: Form(
+                  key: _signupFormKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
+                    ),
+                    child: SectionCard(
+                      children: [
+                        const SizedBox(height: 20),
 
-                      Padding(
-                        padding: TextStyleTheme.insets,
-                        child: TextFormField(
-                          controller: _emailController,
-                          cursorColor: BrandColors.darkGreen,
-                          decoration: TextStyleTheme.textInput(
-                            label: "Email",
-                            prefixIcon: const Icon(Icons.mail_outline),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter an email';
-                            }
-                            if (!EmailValidator.validate(value)) {
-                              return 'Please enter a valid email address';
-                            }
-                            if (_firebaseErrorCode == 'email-already-in-use') {
-                              return 'An account already exists for this email';
-                            }
-                            return null;
-                          },
+                        Text(
+                          "Tara, kain!",
+                          style: TextStyleTheme.heading,
+                          textAlign: TextAlign.center,
                         ),
-                      ),
 
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: TextStyleTheme.insets,
-                              child: TextFormField(
-                                controller: _fnameController,
-                                cursorColor: BrandColors.green,
-                                decoration: TextStyleTheme.textInput(label: "First Name"),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a first name';
-                                  }
-                                  return null;
-                                },
+                        Text(
+                          "Ready to see what's on the table?",
+                          style: TextStyleTheme.body,
+                          textAlign: TextAlign.center,
+                        ),
+
+                        const SizedBox(height: 25),
+
+                        // EMAIL
+                        Padding(
+                          padding: TextStyleTheme.insets,
+                          child: TextFormField(
+                            controller: _emailController,
+                            cursorColor: BrandColors.darkGreen,
+                            decoration: TextStyleTheme.textInput(
+                              label: "Email",
+                              prefixIcon: const Icon(Icons.mail_outline),
+                            ).copyWith(errorText: _emailError),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an email';
+                              }
+                              if (!EmailValidator.validate(value)) {
+                                return 'Please enter a valid email address';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+
+                        // NAME ROW
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: TextStyleTheme.insets,
+                                child: TextFormField(
+                                  controller: _fnameController,
+                                  cursorColor: BrandColors.green,
+                                  decoration: TextStyleTheme.textInput(
+                                    label: "First Name",
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Enter first name';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: TextStyleTheme.insets,
-                              child: TextFormField(
-                                controller: _lnameController,
-                                cursorColor: BrandColors.darkGreen,
-                                decoration: TextStyleTheme.textInput(label: "Last Name"),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a last name';
-                                  }
-                                  return null;
-                                },
+                            Expanded(
+                              child: Padding(
+                                padding: TextStyleTheme.insets,
+                                child: TextFormField(
+                                  controller: _lnameController,
+                                  cursorColor: BrandColors.darkGreen,
+                                  decoration: TextStyleTheme.textInput(
+                                    label: "Last Name",
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Enter last name';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+
+                        // USERNAME
+                        Padding(
+                          padding: TextStyleTheme.insets,
+                          child: TextFormField(
+                            controller: _userNameController,
+                            cursorColor: BrandColors.darkGreen,
+                            decoration: TextStyleTheme.textInput(
+                              label: "Username",
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter username';
+                              }
+                              return null;
+                            },
                           ),
-                        ],
-                      ),
-
-                      Padding(
-                        padding: TextStyleTheme.insets,
-                        child: TextFormField(
-                          controller: _userNameController,
-                          cursorColor: BrandColors.darkGreen,
-                          decoration: TextStyleTheme.textInput(label: "Username"),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a username';
-                            }
-                            return null;
-                          },
                         ),
-                      ),
 
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: TextFormField(
-                          controller: _passwordController,
-                          cursorColor: BrandColors.darkGreen,
-                          obscureText: true,
-                          decoration: TextStyleTheme.textInput(label: "Password"),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a password';
-                            }
-                            if (value.length < 8) {
-                              return 'Password must be at least 8 characters long';
-                            }
-                            if (!RegExp(r'[A-Za-z]').hasMatch(value)) {
-                              return 'Password must contain at least one letter';
-                            }
-                            if (!RegExp(r'\d').hasMatch(value)) {
-                              return 'Password must contain at least one number';
-                            }
-                            if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                              return 'Password must contain at least one special character';
-                            }
-                            if (_firebaseErrorCode == 'weak-password') {
-                              return 'Password is too weak';
-                            }
-                            return null;
-                          },
+                        // PASSWORD
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: TextFormField(
+                            controller: _passwordController,
+                            cursorColor: BrandColors.darkGreen,
+                            obscureText: true,
+                            decoration: TextStyleTheme.textInput(
+                              label: "Password",
+                            ).copyWith(errorText: _passwordError),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter password';
+                              }
+                              if (value.length < 8) {
+                                return 'Min 8 characters';
+                              }
+                              if (!RegExp(r'[A-Za-z]').hasMatch(value)) {
+                                return 'Must include a letter';
+                              }
+                              if (!RegExp(r'\d').hasMatch(value)) {
+                                return 'Must include a number';
+                              }
+                              if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                                return 'Must include a special character';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
 
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: TextFormField(
-                          controller: _confirmController,
-                          cursorColor: BrandColors.darkGreen,
-                          obscureText: true,
-                          decoration: TextStyleTheme.textInput(label: "Confirm Password"),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
-                            }
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          },
+                        // CONFIRM PASSWORD
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: TextFormField(
+                            controller: _confirmController,
+                            cursorColor: BrandColors.darkGreen,
+                            obscureText: true,
+                            decoration: TextStyleTheme.textInput(
+                              label: "Confirm Password",
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Confirm your password';
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      Padding(
-                        padding: TextStyleTheme.insets,
-                        child: PrimaryButton(
-                          onPressed: submit,
-                          text: "Sign Up",
-                          style: "red",
+                        Padding(
+                          padding: TextStyleTheme.insets,
+                          child: PrimaryButton(
+                            onPressed: submit,
+                            text: "Sign Up",
+                            style: "red",
+                          ),
                         ),
-                      ),
 
-                      Padding(
-                        padding: TextStyleTheme.insets,
-                        child: PrimaryButton(
-                          onPressed: () => Navigator.pop(context),
-                          text: "Back",
-                          style: "gray",
+                        Padding(
+                          padding: TextStyleTheme.insets,
+                          child: PrimaryButton(
+                            onPressed: () => Navigator.pop(context),
+                            text: "Back",
+                            style: "gray",
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ]),
+
+              const SizedBox(height: 20),
+            ],
+          ),
 
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.4),
               child: const Center(
-                child: CircularProgressIndicator(color: BrandColors.mediumGreen),
+                child: CircularProgressIndicator(
+                  color: BrandColors.mediumGreen,
+                ),
               ),
             ),
         ],
@@ -254,11 +283,13 @@ class SignupPageState extends State<SignupPage> {
 
     setState(() {
       _isLoading = true;
+      _emailError = null;
+      _passwordError = null;
     });
 
     final authProvider = context.read<AppAuthProvider>();
 
-    String? code = await authProvider.signUp(
+    final code = await authProvider.signUp(
       _fnameController.text,
       _lnameController.text,
       _userNameController.text,
@@ -274,10 +305,13 @@ class SignupPageState extends State<SignupPage> {
 
     if (code != null) {
       setState(() {
-        _firebaseErrorCode = code;
+        if (code == 'email-already-in-use') {
+          _emailError = "An account already exists for this email";
+        }
+        if (code == 'weak-password') {
+          _passwordError = "Password is too weak";
+        }
       });
-
-      _signupFormKey.currentState!.validate();
       return;
     }
 
