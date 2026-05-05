@@ -9,7 +9,8 @@ import "package:provider/provider.dart";
 
 class LoginPage extends StatefulWidget {
   final String title;
-  const LoginPage({super.key, required this.title});
+  final List<String> subtitle;
+  const LoginPage({super.key, required this.title, required this.subtitle});
 
   @override 
   LoginPageState createState() => LoginPageState();
@@ -45,10 +46,8 @@ class LoginPageState extends State<LoginPage> {
         children: [
           FullHeightColumn(children: [
             const SizedBox(height: 40),
-            Image.asset(
-              'assets/salologo1.png',
-              height: 100,
-            ),
+
+            SaloHeader(title: widget.title, subtitle: widget.subtitle),
 
             Expanded(
               child: Form(

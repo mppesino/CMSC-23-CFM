@@ -9,7 +9,9 @@ import "package:provider/provider.dart";
 
 class SignupPage extends StatefulWidget {
   final String title;
-  SignupPage({super.key, required this.title});
+  final List<String> subtitle;
+
+  SignupPage({super.key, required this.title, required this.subtitle});
 
   @override 
   SignupPageState createState() => SignupPageState();
@@ -59,10 +61,9 @@ class SignupPageState extends State<SignupPage> {
         children: [
           FullHeightColumn(children: [
             const SizedBox(height: 40),
-            Image.asset(
-              'assets/salologo1.png',
-              height: 100,
-            ),
+
+            SaloHeader(title: widget.title, subtitle: widget.subtitle),
+
             Expanded(
               child: Form(
                 key: _signupFormKey,

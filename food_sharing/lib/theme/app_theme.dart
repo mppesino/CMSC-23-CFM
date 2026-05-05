@@ -45,7 +45,7 @@ class BrandColors {
 
 class TextStyleTheme {
   static final title = GoogleFonts.sourGummy(
-    fontSize: 72,
+    fontSize: 64,
     fontWeight: FontWeight.w800,
     color: BrandColors.darkGreen,
     height: 0.8,
@@ -53,6 +53,14 @@ class TextStyleTheme {
   
   static final titleSmall = GoogleFonts.sourGummy(
     fontSize: 36,
+    fontWeight: FontWeight.w800,
+    color: BrandColors.darkGreen,
+    height: 0.8,
+  );
+
+
+  static final titleXs = GoogleFonts.sourGummy(
+    fontSize: 22,
     fontWeight: FontWeight.w800,
     color: BrandColors.darkGreen,
     height: 0.8,
@@ -90,7 +98,7 @@ class TextStyleTheme {
   );
 
   static final subtitle = GoogleFonts.sourGummy(
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
     color: BrandColors.black
   );

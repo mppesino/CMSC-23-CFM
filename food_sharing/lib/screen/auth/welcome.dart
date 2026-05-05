@@ -1,11 +1,15 @@
 // this file is for the welcome page after clicking log in
 
 import 'package:flutter/material.dart';
+import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/provider/users_provider.dart';
+import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+  final String title;
+  final List<String> subtitle;
+  const WelcomeScreen({super.key, required this.title, required this.subtitle});
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -61,10 +65,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: Column(
             children: [
               // app logo
-              Image.asset(
-                'assets/salologo.png',
-                height: 80,
-              ),
+              SaloHeader(title: widget.title, subtitle: widget.subtitle),
 
               const SizedBox(height: 20),
 

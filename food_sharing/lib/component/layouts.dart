@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:food_sharing/theme/app_theme.dart';
 
 // FullHeightColumn
 // If contents of the column is short, it expands to fill the screen vertically
@@ -56,6 +57,48 @@ class CenteredColumn extends StatelessWidget {
             ),
         );
       },
+    );
+  }
+}
+
+class SaloHeader extends StatelessWidget {
+  final String title;
+  final List<String> subtitle;
+
+  const SaloHeader({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/salologo_only.png',
+          height: 64
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyleTheme.titleSmall,
+            ),
+            Text(
+              subtitle[0],
+              style: TextStyleTheme.subtitle,
+            ),
+            Text(
+              subtitle[1],
+              style: TextStyleTheme.subtitle,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

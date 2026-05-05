@@ -60,9 +60,9 @@ class FoodSharing extends StatelessWidget {
       initialRoute: "/",
       routes:{
         '/': (context) => AuthGate(title: appTitle, subtitle: appSubtitle),
-        "/login": (context) => LoginPage(title: appTitle),
-        "/signup": (context) => SignupPage(title: appTitle),
-        "/welcome": (context) => WelcomeScreen(),
+        "/login": (context) => LoginPage(title: appTitle, subtitle: appSubtitle,),
+        "/signup": (context) => SignupPage(title: appTitle, subtitle: appSubtitle,),
+        "/welcome": (context) => WelcomeScreen(title: appTitle, subtitle: appSubtitle),
         "/app_frame": (context) => AppFrame(),
         "/search": (context) => SearchPage()
       },

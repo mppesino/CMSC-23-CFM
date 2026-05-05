@@ -62,4 +62,4 @@ flutter:
   assets:
     - assets/salologo.png
     - assets/salologo1.png
-  
+    - assets/salologo_only.png

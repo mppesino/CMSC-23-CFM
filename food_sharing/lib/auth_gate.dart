@@ -71,7 +71,10 @@ return StreamBuilder(
     final user = context.watch<UsersProvider>().currentUser;
 
     if (user == null || !user.isOnboarded) {
-      return const WelcomeScreen();
+      return WelcomeScreen(     
+        title: widget.title,
+        subtitle: widget.subtitle,
+      );
     }
 
     return const AppFrame();
