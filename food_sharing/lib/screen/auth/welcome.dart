@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/provider/users_provider.dart';
-import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
