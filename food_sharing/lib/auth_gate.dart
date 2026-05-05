@@ -1,8 +1,6 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:food_sharing/api/firebase_users_api.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/auth/landing_page.dart';
@@ -38,7 +36,7 @@ class AuthGateState extends State<AuthGate>{
 return StreamBuilder(
   stream: userStream,
   builder: (context, snapshot) {
-    
+
     final userProvider = context.watch<UsersProvider>();
     if (userProvider.isLoading) {
       return const Scaffold(

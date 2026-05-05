@@ -38,7 +38,7 @@ Future<void> main() async {
             usersProvider!.clearUser();
           }
 
-          return usersProvider!;
+          return usersProvider;
         },
       ),
       ],
