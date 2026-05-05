@@ -42,13 +42,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if (user == null) return;
 
     if (selectedTags.isEmpty) return;
-
-    final tagMap = {
-      for (final tag in selectedTags) tag: tag,
-    };
+    final tagList = selectedTags.toList();
 
     await userProvider.editUser(user.userId!, {
-      'tags': tagMap,
+      'tags': tagList,
       'isOnboarded': true,
     });
   }
