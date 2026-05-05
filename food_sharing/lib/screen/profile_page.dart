@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/component/sections.dart';
+import 'package:food_sharing/models/user.dart';
+import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
 
-  final String userID;
+  final User? user;
 
-  ProfilePage({super.key, required this.userID});
+  ProfilePage({super.key, required this.user});
 
   @override 
   ProfilePageState createState() => ProfilePageState();
@@ -26,8 +29,8 @@ class ProfilePageState extends State<ProfilePage> {
             Row(children: [
               Column(
                 children: [
-                    ProfilePicture(userID: widget.userID,),
-                    Text("@kiemu", style: TextStyleTheme.body,)
+                    ProfilePicture(userID: widget.user?.userId ?? "",),
+                    Text(widget.user?.userName ?? "", style: TextStyleTheme.body,)
                 ],
               ),
               Column( crossAxisAlignment: CrossAxisAlignment.start,
