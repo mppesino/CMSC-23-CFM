@@ -296,6 +296,7 @@ class SignupPageState extends State<SignupPage> {
     if (isTaken ?? false) {
       setState(() {
         _usernameError = "Username already taken";
+        _isLoading = false;
       });
       return;
     }
