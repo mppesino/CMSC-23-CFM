@@ -155,6 +155,11 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void submit() async {
+
+    setState(() {
+        _firebaseErrorCode = null;
+    });
+
     if (!_loginFormKey.currentState!.validate()) return;
 
     setState(() {
