@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_sharing/constants.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 class SearchPage extends StatefulWidget{
@@ -11,10 +12,6 @@ class SearchPage extends StatefulWidget{
 class _SearchPageState extends State<SearchPage>{
   final TextEditingController _searchController = TextEditingController();
 
-  final List<String> _dietKeywords = ['Dairy-Free', 'Gluten-Free', 'Halal', 'Pescetarian', 'Vegan', 'Vegetarian', ]; //Dietary Restrictions
-
-
-  final List<String> _foodCategoryKeywords = ['Beverage', 'Canned/Packaged', 'Grains', 'Proteins & Dairy', 'Raw Ingredients', 'Snacks'];  //Food Categories
   final Set<String> _selectedKeywords = {};
 
   @override
@@ -64,8 +61,8 @@ class _SearchPageState extends State<SearchPage>{
 
                   child: Column(
                     children: [
-                      _buildSection('Dietary Restrictions', _dietKeywords),
-                      _buildSection('Food Categories', _foodCategoryKeywords),
+                      _buildSection('Dietary Restrictions', FoodTags.dietaryTags),
+                      _buildSection('Food Categories', FoodTags.categoryTags),
                     ],
                   ),
                 ),

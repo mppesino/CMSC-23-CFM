@@ -27,7 +27,7 @@ class AppFrameState extends State<AppFrame> {
     final List<Widget> _pages = [
       const Center(child: Text("Home")),    
       const SearchPage(),  
-      ProfilePage(user: user), 
+      ProfilePage(), 
     ];
 
 

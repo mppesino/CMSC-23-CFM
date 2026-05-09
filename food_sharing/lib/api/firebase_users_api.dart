@@ -43,4 +43,26 @@ class FirebaseUsersApi {
       return "Error on ${e.code}: ${e.message}";
     }
   }
+
+  Future<bool> isUsernameTaken(
+    String username,
+    {String? userId}
+  ) async {
+    final result = await FirebaseFirestore.instance
+        .collection('users')
+        .where('userName', isEqualTo: username.trim())
+        .limit(1)
+        .get();
+
+    if (result.docs.isEmpty) {
+      return false;
+    }
+    final doc = result.docs.first;
+
+    if (userId != null && doc.id == userId) {
+    return false;
+    }
+
+    return true;
+}
 }

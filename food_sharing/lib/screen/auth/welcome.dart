@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/provider/users_provider.dart';
+import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -111,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       spacing: 8,
                       runSpacing: 8,
                       children: dietaryTags
-                          .map((tag) => _SelectableChip(
+                          .map((tag) => SelectableChip(
                                 label: tag,
                                 selected: selectedTags.contains(tag),
                                 onTap: () => _toggleTag(tag),
@@ -132,7 +133,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       spacing: 8,
                       runSpacing: 8,
                       children: categoryTags
-                          .map((tag) => _SelectableChip(
+                          .map((tag) => SelectableChip(
                                 label: tag,
                                 selected: selectedTags.contains(tag),
                                 onTap: () => _toggleTag(tag),
@@ -161,12 +162,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 }
 
 // CHIP
-class _SelectableChip extends StatelessWidget {
+class SelectableChip extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
 
-  const _SelectableChip({
+  const SelectableChip({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -181,9 +182,9 @@ class _SelectableChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: selected
-              ? const Color.fromRGBO(59, 109, 17, 1)
+              ? BrandColors.green
               : Colors.transparent,
-          border: Border.all(color: const Color.fromRGBO(59, 109, 17, 1)),
+          border: Border.all(color: BrandColors.green),
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -193,7 +194,7 @@ class _SelectableChip extends StatelessWidget {
             fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             color: selected
                 ? Colors.white
-                : const Color.fromRGBO(59, 109, 17, 1),
+                : BrandColors.green,
           ),
         ),
       ),

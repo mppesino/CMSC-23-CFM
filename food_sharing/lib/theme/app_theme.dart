@@ -87,6 +87,14 @@ class TextStyleTheme {
     color: BrandColors.white,
     height: 0.8,
   );
+
+    static final heading_white_s = GoogleFonts.sourGummy(
+    fontSize: 20,
+    fontWeight: FontWeight.w800,
+    color: BrandColors.white,
+    height: 0.8,
+  );
+  
   static final body = GoogleFonts.sourGummy(
     fontSize: 18,
     color: BrandColors.black

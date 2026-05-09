@@ -3,6 +3,7 @@ import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/component/sections.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
+import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:email_validator/email_validator.dart';
 import "package:provider/provider.dart";
@@ -289,9 +290,11 @@ class SignupPageState extends State<SignupPage> {
     });
 
     final authProvider = context.read<AppAuthProvider>();
-    bool? isTaken = await authProvider.isUsernameTaken(_userNameController.text);
+    final usersProvider = context.read<UsersProvider>();
 
-    if (isTaken ?? false) {
+    bool isTaken = await usersProvider.isUsernameTaken(_userNameController.text);
+
+    if (isTaken) {
       setState(() {
         _usernameError = "Username already taken";
         _isLoading = false;

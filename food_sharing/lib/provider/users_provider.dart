@@ -65,31 +65,41 @@ class UsersProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editUser(String uid, Map<String, dynamic> user) async {
-    String message = await firebaseService.editUser(uid, user);
+Future<void> editUser(String uid, Map<String, dynamic> user) async {
+  String message = await firebaseService.editUser(uid, user);
 
-    if (_currentUser != null && _currentUser!.userId == uid) {
-      _currentUser = User(
-        userId: _currentUser!.userId,
-        email: _currentUser!.email,
-        firstName: _currentUser!.firstName,
-        lastName: _currentUser!.lastName,
-        userName: _currentUser!.userName,
-        bio: _currentUser!.bio,
-        profilePicture: _currentUser!.profilePicture,
-        isOnboarded: user['isOnboarded'] ?? _currentUser!.isOnboarded,
-        tags: user['tags'] != null
-            ? List<String>.from(user['tags'])
-            : _currentUser!.tags,
-        );
-    }
+  if (_currentUser != null && _currentUser!.userId == uid) {
+    _currentUser = User(
+      userId: _currentUser!.userId,
+      email: _currentUser!.email,
 
-    notifyListeners();
+      firstName: user['firstName'] ?? _currentUser!.firstName,
+      lastName: user['lastName'] ?? _currentUser!.lastName,
+      userName: user['userName'] ?? _currentUser!.userName,
+      bio: user['bio'] ?? _currentUser!.bio,
 
+      profilePicture: _currentUser!.profilePicture,
 
-    debugPrint(message);
-    notifyListeners();
+      isOnboarded:
+          user['isOnboarded'] ?? _currentUser!.isOnboarded,
+
+      tags: user['tags'] != null
+          ? List<String>.from(user['tags'])
+          : _currentUser!.tags,
+    );
   }
+  notifyListeners();
+
+  print(message);
+}
+
+  Future<bool> isUsernameTaken(String username, {String? uid}) async {
+    bool? result;
+    result = await firebaseService.isUsernameTaken(username, userId: uid);
+    notifyListeners();
+    return result;
+  }
+
 
   Future<void> deleteUser(String uid) async {
     String message = await firebaseService.deleteUser(uid);
