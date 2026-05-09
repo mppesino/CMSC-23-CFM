@@ -51,6 +51,14 @@ class AppAuthProvider with ChangeNotifier {
     return code;
   }
 
+
+  Future<bool?> isUsernameTaken(String username) async {
+    bool? result;
+    result = await authService.isUsernameTaken(username);
+    notifyListeners();
+    return result;
+  }
+
   Future<void> signOut() async {
     await authService.signOut();
     notifyListeners();

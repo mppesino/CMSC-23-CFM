@@ -36,6 +36,7 @@ class SignupPageState extends State<SignupPage> {
   // Firebase UI errors (separate from validators)
   String? _emailError;
   String? _passwordError;
+  String? _usernameError;
 
   @override
   void initState() {
@@ -172,11 +173,12 @@ class SignupPageState extends State<SignupPage> {
                             cursorColor: BrandColors.darkGreen,
                             decoration: TextStyleTheme.textInput(
                               label: "Username",
-                            ),
+                            ).copyWith(errorText: _usernameError),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Enter username';
                               }
+
                               return null;
                             },
                           ),
@@ -288,6 +290,7 @@ class SignupPageState extends State<SignupPage> {
     });
 
     final authProvider = context.read<AppAuthProvider>();
+    bool? isTaken = await authProvider.isUsernameTaken(_userNameController.text);
 
     final code = await authProvider.signUp(
       _fnameController.text,
@@ -302,6 +305,13 @@ class SignupPageState extends State<SignupPage> {
     setState(() {
       _isLoading = false;
     });
+
+    if (isTaken ?? false) {
+      setState(() {
+        _usernameError = "Username already taken";
+      });
+      return;
+    }
 
     if (code != null) {
       setState(() {

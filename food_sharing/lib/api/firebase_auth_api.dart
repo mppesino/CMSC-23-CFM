@@ -50,6 +50,17 @@ class FirebaseAuthAPI {
     return null;
   }
 
+  Future<bool?> isUsernameTaken(String username) async {
+      
+      final result = await FirebaseFirestore.instance
+          .collection('users')
+          .where('username', isEqualTo: username.trim())
+          .limit(1)
+          .get();
+
+      return result.docs.isNotEmpty;
+  }
+
   Future<void> signOut() async {
     await auth.signOut();
   }
