@@ -287,10 +287,18 @@ class SignupPageState extends State<SignupPage> {
       _isLoading = true;
       _emailError = null;
       _passwordError = null;
+      _usernameError = null;
     });
 
     final authProvider = context.read<AppAuthProvider>();
     bool? isTaken = await authProvider.isUsernameTaken(_userNameController.text);
+
+    if (isTaken ?? false) {
+      setState(() {
+        _usernameError = "Username already taken";
+      });
+      return;
+    }
 
     final code = await authProvider.signUp(
       _fnameController.text,
@@ -305,13 +313,6 @@ class SignupPageState extends State<SignupPage> {
     setState(() {
       _isLoading = false;
     });
-
-    if (isTaken ?? false) {
-      setState(() {
-        _usernameError = "Username already taken";
-      });
-      return;
-    }
 
     if (code != null) {
       setState(() {
