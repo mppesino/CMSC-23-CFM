@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/component/layouts.dart';
@@ -11,7 +9,6 @@ import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/auth/welcome.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/models/user.dart';
-import 'package:image/image.dart' as img;
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/models/user.dart';
-import 'package:food_sharing/theme/app_theme.dart';
 
 import 'dart:convert';
 
