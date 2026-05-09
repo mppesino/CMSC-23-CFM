@@ -54,7 +54,7 @@ class FirebaseAuthAPI {
       
       final result = await FirebaseFirestore.instance
           .collection('users')
-          .where('username', isEqualTo: username.trim())
+          .where('userName', isEqualTo: username.trim())
           .limit(1)
           .get();
 
