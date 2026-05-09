@@ -148,6 +148,7 @@ class EditUserPageState extends State<EditUserPage> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _fnameController,
+                                  cursorColor: BrandColors.darkGreen,
                                   decoration: TextStyleTheme.textInput(
                                     label: "First Name",
                                   ),
@@ -161,6 +162,7 @@ class EditUserPageState extends State<EditUserPage> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _lnameController,
+                                  cursorColor: BrandColors.darkGreen,
                                   decoration: TextStyleTheme.textInput(
                                     label: "Last Name",
                                   ),
@@ -179,6 +181,7 @@ class EditUserPageState extends State<EditUserPage> {
                           padding: TextStyleTheme.insets,
                           child: TextFormField(
                             controller: _userNameController,
+                            cursorColor: BrandColors.darkGreen,
                             decoration: TextStyleTheme.textInput(
                               label: "Username",
                             ).copyWith(errorText: _usernameError),
@@ -194,6 +197,7 @@ class EditUserPageState extends State<EditUserPage> {
                           padding: TextStyleTheme.insets,
                           child: TextFormField(
                             controller: _bioController,
+                            cursorColor: BrandColors.darkGreen,
                             decoration: TextStyleTheme.textInput(
                               label: "Bio",
                             ),
