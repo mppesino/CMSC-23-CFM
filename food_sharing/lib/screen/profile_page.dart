@@ -31,7 +31,7 @@ class ProfilePageState extends State<ProfilePage> {
                   children: [
                     Column(
                       children: [
-                        ProfilePicture(userID: currentUser?.userId ?? ""),
+                        ProfilePicture(user: currentUser,),
                         Text(
                           "@${currentUser?.userName ?? "user"}",
                           style: TextStyleTheme.body,

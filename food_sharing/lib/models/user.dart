@@ -1,3 +1,28 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
+
+Uint8List base64ToImage(String base64String) {
+  return base64Decode(base64String);
+}
+
+String imageToBase64(Uint8List bytes) {
+  return base64Encode(bytes);
+}
+
+Future<Uint8List> compressImage(XFile file) async {
+  final bytes = await file.readAsBytes();
+  final image = img.decodeImage(bytes)!;
+
+  final resized = img.copyResize(image, width: 300);
+
+  return Uint8List.fromList(
+    img.encodeJpg(resized, quality: 60),
+  );
+}
+
 class User {
   String? userId;
   String email;
@@ -7,6 +32,7 @@ class User {
   String? bio;
   String? profilePicture;
   bool isOnboarded;
+  bool isVerified;
   List<String>? tags;
 
   User({
@@ -18,6 +44,7 @@ class User {
     this.bio,
     this.profilePicture,
     required this.isOnboarded,
+    required this.isVerified,
     this.tags,
   });
 
@@ -31,11 +58,13 @@ class User {
       bio: json['bio'],
       profilePicture: json['profilePicture'],
       isOnboarded: json['isOnboarded'] ?? false,
+      isVerified: json['isVerified'] ?? false,
       tags: json['tags'] != null
           ? List<String>.from(json['tags'])
           : null,
         );
   }
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -46,6 +75,7 @@ class User {
       'userName': userName,
       'bio': bio,
       'profilePicture': profilePicture,
+      'isVerified': isVerified,
       'isOnboarded': isOnboarded,
       'tags': tags,
     };
