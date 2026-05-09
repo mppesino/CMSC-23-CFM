@@ -207,9 +207,7 @@ class SignupPageState extends State<SignupPage> {
                               if (!RegExp(r'\d').hasMatch(value)) {
                                 return 'Must include a number';
                               }
-                              if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                                return 'Must include a special character';
-                              }
+      
                               return null;
                             },
                           ),
