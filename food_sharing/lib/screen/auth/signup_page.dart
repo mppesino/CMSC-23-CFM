@@ -6,7 +6,12 @@ import 'package:food_sharing/provider/auth_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:image_picker/image_picker.dart';
 import "package:provider/provider.dart";
+
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignupPage extends StatefulWidget {
   final String title;
@@ -62,6 +67,24 @@ class SignupPageState extends State<SignupPage> {
     super.dispose();
   }
 
+
+  //for selfie verification:
+  File? _verificationSelfie;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _takeSelfie() async{
+    final XFile? photo = await _picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front
+    );
+
+    if(photo != null){
+      setState(() {
+        _verificationSelfie = File(photo.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +109,7 @@ class SignupPageState extends State<SignupPage> {
                     ),
                     child: SectionCard(
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
 
                         Text(
                           "Tara, kain!",
@@ -236,7 +259,11 @@ class SignupPageState extends State<SignupPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
+
+                        _buildVerificationButton(),
+
+                        const SizedBox(height: 15),
 
                         Padding(
                           padding: TextStyleTheme.insets,
@@ -267,7 +294,7 @@ class SignupPageState extends State<SignupPage> {
 
           if (_isLoading)
             Container(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
               child: const Center(
                 child: CircularProgressIndicator(
                   color: BrandColors.mediumGreen,
@@ -281,6 +308,13 @@ class SignupPageState extends State<SignupPage> {
 
   void submit() async {
     if (!_signupFormKey.currentState!.validate()) return;
+
+    if (_verificationSelfie == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please take a verification selfie to proceed.")),
+      );
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -329,6 +363,43 @@ class SignupPageState extends State<SignupPage> {
     }
 
     Navigator.pop(context);
-
   }
+
+
+
+  Widget _buildVerificationButton(){
+    return Padding(
+      padding: TextStyleTheme.insets,
+      child: Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: _takeSelfie, 
+            icon: const Icon(Icons.camera_alt),
+            label: const Text("Verify Identity"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _verificationSelfie == null? BrandColors.mediumGreen : Colors.green[800],
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10))
+            ),
+          ),
+          if(_verificationSelfie != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                  const SizedBox(width: 5),
+                  Text("Selfie Captured", style: TextStyleTheme.body.copyWith(color: Colors.green))
+                ]
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
+
+  
 }
