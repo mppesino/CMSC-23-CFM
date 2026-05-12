@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_sharing/constants.dart';
+import 'package:food_sharing/models/foodtags.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 class SearchPage extends StatefulWidget{
@@ -51,7 +51,7 @@ class _SearchPageState extends State<SearchPage>{
                     color: Colors.white, 
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
