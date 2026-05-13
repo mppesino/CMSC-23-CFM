@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_sharing/component/layouts.dart';
+import 'package:food_sharing/component/posts.dart';
 import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/component/sections.dart';
+import 'package:food_sharing/models/post.dart';
+import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -18,10 +22,10 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.watch<UsersProvider>().currentUser;
+    final postsProvider = context.watch<PostsProvider>();
 
     return Scaffold(
-      body: CenteredColumn(
-        mainAxisAlignment: MainAxisAlignment.start,
+      body: Column(
         children: [
           SectionCard(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -35,7 +39,6 @@ class ProfilePageState extends State<ProfilePage> {
                       ProfilePicture(
                         user: currentUser,
                       ),
-
                       Text(
                         "@${currentUser?.userName ?? "user"}",
                         style: TextStyleTheme.body,
@@ -58,33 +61,10 @@ class ProfilePageState extends State<ProfilePage> {
                                 style: TextStyleTheme.subtitle_bold,
                               ),
                             ),
-
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    size: 20,
-                                    color: BrandColors.black,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/edit-profile',
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
+                            
                           ],
                         ),
 
-                        ProfilePicture(user: currentUser,),
                         Text(
                           currentUser?.bio ?? "This is my bio!",
                           style: TextStyleTheme.body,
@@ -100,70 +80,7 @@ class ProfilePageState extends State<ProfilePage> {
                               .toList(),
                         ),
 
-                        const SizedBox(height: 20),
 
-                        // LOGOUT BUTTON
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-
-                            icon: const Icon(Icons.logout),
-
-                            label: const Text(
-                              "Logout",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            onPressed: () async {
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: const Text('Logout'),
-                                  content: const Text(
-                                    'Are you sure you want to logout?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, false),
-                                      child: const Text('Cancel'),
-                                    ),
-
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, true),
-                                      child: const Text('Logout'),
-                                    ),
-                                  ],
-                                ),
-                              );
-
-                              if (confirm == true) {
-                                await FirebaseAuth.instance.signOut();
-
-                                if (context.mounted) {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    '/login',
-                                    (route) => false,
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -171,6 +88,10 @@ class ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
+
+          Expanded(child: PostFeed(stream: postsProvider.userPost(currentUser?.userId ?? ""), emptyText: "User doesn't have any posts."))
+
+
         ],
       ),
     );

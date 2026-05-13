@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:food_sharing/models/post.dart'; // Import the model from the file above
 
 class PostsProvider extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Stream used by the _PostsFeed in PantryPage
   Stream<QuerySnapshot> get post {
     return _firestore
         .collection('posts')
+        .orderBy('expiration', descending: false)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> userPost(String userId) {
+    return _firestore
+        .collection('posts')
+        .where('userId', isEqualTo: userId)
         .orderBy('expiration', descending: false)
         .snapshots();
   }

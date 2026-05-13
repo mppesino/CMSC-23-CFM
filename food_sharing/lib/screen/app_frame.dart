@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_sharing/component/drawer.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/pantry_page.dart'; // <--- Add this import
 import 'package:food_sharing/screen/profile_page.dart';
@@ -18,24 +19,26 @@ class AppFrameState extends State<AppFrame> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.watch<UsersProvider>(); // Use watch to react to changes
+    final userProvider = context.watch<UsersProvider>(); 
     final user = userProvider.currentUser;
 
     // List of widgets for each tab
     final List<Widget> _pages = [
-      const PantryPage(), // Swapped "Home" text for your actual page
+      const PantryPage(), 
       const SearchPage(),
       ProfilePage(),
     ];
 
     return Scaffold(
+      endDrawer: _selectedIndex == 2 ? AppDrawer() : null,
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _selectedIndex == 0 ? BrandColors.black : Colors.white,
+        ),
         leading: IconButton(
           icon: const Icon(Icons.add),
-          // Logic for icon color based on selection
           color: _selectedIndex == 0 ? BrandColors.black : BrandColors.white,
           onPressed: () {
-            // Navigate to the add post page when the plus is tapped
             Navigator.pushNamed(context, '/add_post');
           },
         ),
