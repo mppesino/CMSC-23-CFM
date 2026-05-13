@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_sharing/constants.dart';
+import 'package:food_sharing/utils.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
 class SearchPage extends StatefulWidget{
