@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/screen/profile_page.dart';
-
 import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/models/user.dart';
 import 'package:food_sharing/provider/users_provider.dart';
@@ -36,7 +34,16 @@ class PostCard extends StatelessWidget {
                 const SizedBox(height: 8),
               ],
 
-              ClipRRect(
+              GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (_) => PostDetailPage(post: post),
+                  ));
+              },  
+              child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: AspectRatio(
                   aspectRatio: 1.1,
@@ -70,13 +77,11 @@ class PostCard extends StatelessWidget {
                 ),
               ),
 
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: _PostActionButton(post: post),
-                ),
-              )   
-         ],
+              
+              ],))
+
+
+            ]        
           ),
         ),
       );
@@ -109,50 +114,6 @@ class PostCard extends StatelessWidget {
       );
 }
 
-class _PostActionButton extends StatelessWidget {
-  final Post post;
-
-  const _PostActionButton({required this.post});
-
-  @override
-  Widget build(BuildContext context) {
-    final usersProvider = context.read<UsersProvider>();
-
-    bool posterIsUser = post.userId == usersProvider.currentUser?.userId!;
-    String style;
-    String buttonText;
-
-    if(posterIsUser){
-      buttonText = "Edit";
-      style = "yellow";
-    }else{
-      if(post.status==PostStatus.available){
-        buttonText = "Request";
-        style = "green";
-      }else if(post.status==PostStatus.reserved){
-        buttonText = "Reserved";
-        style = "gray";
-      }else{
-        buttonText = "Unavailable";
-        style = "gray";
-      }
-    }
-
-    return PrimaryButton(
-      text: buttonText,
-      style: style,
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => PostDetailPage(post: post),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class PostCardHeader extends StatelessWidget {
   final String? userId;
   const PostCardHeader({required this.userId});
@@ -174,7 +135,7 @@ class PostCardHeader extends StatelessWidget {
 
           if (usersProvider.currentUser != null &&
               user.userId == usersProvider.currentUser?.userId) {
-            return; // don't navigate to self
+              return;
           }
 
           Navigator.push(

@@ -43,16 +43,15 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(create: (_) => TransactionsProvider()),
       ],
-      child: const FoodSharing(),
+      child: FoodSharing(),
     ),
   );
 }
 
 class FoodSharing extends StatelessWidget {
-  const FoodSharing({super.key});
+  FoodSharing({super.key});
   static const appTitle = 'salo';
   static const appSubtitle = ['meals from iskolars', 'for iskolars'];
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -66,7 +65,7 @@ class FoodSharing extends StatelessWidget {
         "/welcome": (context) => const WelcomeScreen(title: appTitle, subtitle: appSubtitle),
         
         // Navigation Routes
-        "/app_frame": (context) => const AppFrame(),
+        "/app_frame": (context) => AppFrame(),
         "/pantry_page": (context) => const PantryPage(), 
         "/add_post": (context) => const AddPostPage(),
 

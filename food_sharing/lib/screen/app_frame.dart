@@ -16,6 +16,11 @@ class AppFrame extends StatefulWidget {
 
 class AppFrameState extends State<AppFrame> {
   int _selectedIndex = 0;
+  
+  void setTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+  });}
 
   @override
   Widget build(BuildContext context) {
@@ -77,4 +82,7 @@ class AppFrameState extends State<AppFrame> {
       ),
     );
   }
+
+
+
 }

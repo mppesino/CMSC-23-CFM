@@ -23,7 +23,9 @@ class ProfilePageState extends State<ProfilePage> {
     final postsProvider = context.watch<PostsProvider>();
 
   return Scaffold(
-    appBar: widget.showAppBar ? AppBar(title:Text("@${widget.user.userName}", style:TextStyleTheme.subtitle_bold), backgroundColor: BrandColors.cream,) : null,
+    appBar: widget.showAppBar ? AppBar(title:Text("@${widget.user.userName}", style:TextStyleTheme.subtitle_bold), backgroundColor: BrandColors.white,) : null,
+    backgroundColor:  widget.showAppBar ? BrandColors.white : BrandColors.cream,
+    
     body: PostFeed(
       stream: postsProvider.getPostsByUser(widget.user.userId ?? ""),
       type: FeedType.profile,

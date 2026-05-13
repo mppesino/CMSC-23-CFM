@@ -32,9 +32,9 @@ class PostDetailPage extends StatelessWidget {
     
     // UI DESIGN ---------------
     return Scaffold(
-      backgroundColor: BrandColors.cream,
+      backgroundColor: BrandColors.white,
       appBar: AppBar(
-        backgroundColor: BrandColors.cream,
+        backgroundColor: BrandColors.white,
         foregroundColor: Colors.black,
         elevation: 0,
         title: Text(post.title, style: TextStyleTheme.subtitle_bold,),
