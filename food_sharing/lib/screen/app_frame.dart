@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/provider/users_provider.dart';
+import 'package:food_sharing/screen/pantry_page.dart'; // <--- Add this import
 import 'package:food_sharing/screen/profile_page.dart';
 import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/theme/app_theme.dart';
@@ -16,54 +16,60 @@ class AppFrame extends StatefulWidget {
 class AppFrameState extends State<AppFrame> {
   int _selectedIndex = 0;
 
-  // These are the widgets for each tab
-
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.read<UsersProvider>();
+    final userProvider = context.watch<UsersProvider>(); // Use watch to react to changes
     final user = userProvider.currentUser;
 
-
+    // List of widgets for each tab
     final List<Widget> _pages = [
-      const Center(child: Text("Home")),    
-      const SearchPage(),  
-      ProfilePage(), 
+      const PantryPage(), // Swapped "Home" text for your actual page
+      const SearchPage(),
+      ProfilePage(),
     ];
 
-
     return Scaffold(
-    appBar: AppBar(
-      leading: IconButton(
-        icon: const Icon(Icons.add),
-        color: _selectedIndex != 0 ? BrandColors.white : BrandColors.black,
-        onPressed: () {
-          // Add your logic here
-          print("Plus button tapped!");
-        },
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.add),
+          // Logic for icon color based on selection
+          color: _selectedIndex == 0 ? BrandColors.black : BrandColors.white,
+          onPressed: () {
+            // Navigate to the add post page when the plus is tapped
+            Navigator.pushNamed(context, '/add_post');
+          },
+        ),
+        title: Text(
+          _selectedIndex != 2 ? "Salo" : user?.userName ?? "User",
+          style: _selectedIndex == 1 
+              ? TextStyleTheme.heading_white 
+              : _selectedIndex == 2 
+                  ? TextStyleTheme.heading_white_md 
+                  : TextStyleTheme.heading,
+        ),
+        centerTitle: true,
+        backgroundColor: _selectedIndex == 0 
+            ? BrandColors.cream 
+            : BrandColors.mediumGreen,
+        elevation: 0,
       ),
-      title: Text(_selectedIndex != 2 ? "Salo" : user?.userName ?? "User", style: _selectedIndex == 1 ? TextStyleTheme.heading_white : _selectedIndex==2 ? TextStyleTheme.heading_white_md : TextStyleTheme.heading), // Optional: your app title
-      centerTitle: true, 
-      backgroundColor: _selectedIndex == 1
-      ? BrandColors.mediumGreen
-      : _selectedIndex == 2
-      ? BrandColors.mediumGreen
-      : BrandColors.cream,    ),      
-      body: _pages[_selectedIndex], // Shows the page based on the index
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: BrandColors.green,
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-        showSelectedLabels: false,   // Hides the label area for the active tab
+        showSelectedLabels: false,
         showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed, // Keeps all icons visible
+        type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label:""),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label:""),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label:""),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
         ],
       ),
     );
