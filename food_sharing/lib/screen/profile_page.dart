@@ -84,6 +84,7 @@ class ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
 
+                        ProfilePicture(user: currentUser,),
                         Text(
                           currentUser?.bio ?? "This is my bio!",
                           style: TextStyleTheme.body,

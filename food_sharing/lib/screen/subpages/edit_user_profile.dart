@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/component/layouts.dart';
+import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/component/sections.dart';
-import 'package:food_sharing/constants.dart';
+import 'package:food_sharing/utils.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/auth/welcome.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditUserPage extends StatefulWidget {
   const EditUserPage({super.key});
@@ -60,9 +63,11 @@ class EditUserPageState extends State<EditUserPage> {
           : selectedTags.add(tag);
     });
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    final user = context.read<UsersProvider>().currentUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: BrandColors.mediumGreen,
@@ -77,6 +82,52 @@ class EditUserPageState extends State<EditUserPage> {
         children: [
           FullHeightColumn(
             children: [
+                SizedBox(height: 20),
+                Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  
+                Padding(padding: EdgeInsets.all(15), child:ProfilePicture(user: user,)),
+
+                SizedBox(
+                width: 50,
+                height: 50,
+                child: IconButton(
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: () async {
+                      final image = await ImagePicker().pickImage(
+                      source: ImageSource.camera,
+                      imageQuality: 70,
+                    );
+
+                    if (image == null) return;
+
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+
+                    final compressedBytes = await compressImage(image);
+                    final base64image = base64Encode(compressedBytes);
+
+                    final usersProvider = context.read<UsersProvider>();
+
+                    await usersProvider.editUser(
+                      usersProvider.currentUser!.userId!,
+                      {
+                        'profilePicture': base64image,
+                        'isVerified': true
+                      },
+                    );
+
+                    setState(() {
+                        _isLoading = false;
+                    });
+                  },
+
+    
+                ),
+              ),
+              ],),
+    
               Expanded(
                 child: Form(
                   key: _editUserFormKey,
@@ -86,8 +137,8 @@ class EditUserPageState extends State<EditUserPage> {
                       vertical: 20,
                     ),
                     child: SectionCard(
+                      color: Colors.white,
                       children: [
-
                         // FIRST + LAST NAME
                         Padding(
                           padding: TextStyleTheme.insets,
@@ -96,6 +147,7 @@ class EditUserPageState extends State<EditUserPage> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _fnameController,
+                                  cursorColor: BrandColors.darkGreen,
                                   decoration: TextStyleTheme.textInput(
                                     label: "First Name",
                                   ),
@@ -109,6 +161,7 @@ class EditUserPageState extends State<EditUserPage> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _lnameController,
+                                  cursorColor: BrandColors.darkGreen,
                                   decoration: TextStyleTheme.textInput(
                                     label: "Last Name",
                                   ),
@@ -127,6 +180,7 @@ class EditUserPageState extends State<EditUserPage> {
                           padding: TextStyleTheme.insets,
                           child: TextFormField(
                             controller: _userNameController,
+                            cursorColor: BrandColors.darkGreen,
                             decoration: TextStyleTheme.textInput(
                               label: "Username",
                             ).copyWith(errorText: _usernameError),
@@ -142,6 +196,7 @@ class EditUserPageState extends State<EditUserPage> {
                           padding: TextStyleTheme.insets,
                           child: TextFormField(
                             controller: _bioController,
+                            cursorColor: BrandColors.darkGreen,
                             decoration: TextStyleTheme.textInput(
                               label: "Bio",
                             ),
@@ -149,7 +204,6 @@ class EditUserPageState extends State<EditUserPage> {
                         ),
                         const SizedBox(height: 15),
 
-                        // TAGS SECTION (FIXED MARGIN)
                         Padding(
                           padding: TextStyleTheme.insets,
                           child: Column(

@@ -78,7 +78,10 @@ Future<void> editUser(String uid, Map<String, dynamic> user) async {
       userName: user['userName'] ?? _currentUser!.userName,
       bio: user['bio'] ?? _currentUser!.bio,
 
-      profilePicture: _currentUser!.profilePicture,
+      profilePicture: user['profilePicture'] ?? _currentUser!.profilePicture,
+
+      isVerified:
+          user['isVerified'] ?? _currentUser!.isVerified,
 
       isOnboarded:
           user['isOnboarded'] ?? _currentUser!.isOnboarded,

@@ -1,3 +1,4 @@
+
 class User {
   String? userId;
   String email;
@@ -7,6 +8,7 @@ class User {
   String? bio;
   String? profilePicture;
   bool isOnboarded;
+  bool isVerified;
   List<String>? tags;
 
   User({
@@ -18,6 +20,7 @@ class User {
     this.bio,
     this.profilePicture,
     required this.isOnboarded,
+    required this.isVerified,
     this.tags,
   });
 
@@ -31,11 +34,13 @@ class User {
       bio: json['bio'],
       profilePicture: json['profilePicture'],
       isOnboarded: json['isOnboarded'] ?? false,
+      isVerified: json['isVerified'] ?? false,
       tags: json['tags'] != null
           ? List<String>.from(json['tags'])
           : null,
         );
   }
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -46,6 +51,7 @@ class User {
       'userName': userName,
       'bio': bio,
       'profilePicture': profilePicture,
+      'isVerified': isVerified,
       'isOnboarded': isOnboarded,
       'tags': tags,
     };

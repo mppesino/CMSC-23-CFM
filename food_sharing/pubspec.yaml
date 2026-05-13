@@ -44,6 +44,9 @@ dependencies:
   provider: ^6.1.5+1
   email_validator: ^3.0.0
   intl: ^0.20.2
+  permission_handler: ^12.0.1
+  image_picker: ^1.2.2
+  image: ^4.8.0
 
 dev_dependencies:
   flutter_test:
@@ -66,3 +69,4 @@ flutter:
     - assets/salologo.png
     - assets/salologo1.png
     - assets/salologo_only.png
+    - assets/pfp.jpg
