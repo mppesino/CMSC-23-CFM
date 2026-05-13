@@ -1,0 +1,313 @@
+// --------------- IMPORTS ---------------
+import 'package:flutter/material.dart';
+import 'package:food_sharing/models/post.dart';
+import 'package:food_sharing/models/transaction.dart';
+import 'package:food_sharing/provider/transactions_provider.dart';
+import 'package:food_sharing/provider/users_provider.dart';
+import 'package:food_sharing/theme/app_theme.dart';
+import 'package:food_sharing/component/buttons.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+// ---------------------------------------------
+
+class PostDetailPage extends StatelessWidget {
+  final Post post;
+  const PostDetailPage({super.key, required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUserId = context.watch<UsersProvider>().currentUser?.userId; // post object
+    final transactionProvider = context.watch<TransactionsProvider>(); // constructor
+
+    // UI DESIGN ---------------
+    return Scaffold(
+      backgroundColor: BrandColors.cream,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        title: const Text("Item Details"),
+      ),
+    // ------------------------------
+
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // image container ---------------
+            Container(
+              width: double.infinity,
+              height: 350,
+              color: Colors.grey[200],
+              // fetch the image url ---------------
+              // NOT WORKING YET!!
+              child: post.imageUrl != null && post.imageUrl!.isNotEmpty
+                  ? Image.network(
+                      post.imageUrl!,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        // if done loading, show the img ---------------
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: BrandColors.green,
+                          ),
+                        );
+                      },
+                      // ---------------------------------------------
+                      // if image fails to load, put a placeholder ---------------
+                      errorBuilder: (_, __, ___) => const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          size: 100,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                  : const Center(
+                      child: Icon(Icons.image, size: 100, color: Colors.grey),
+                    ),
+                    // ---------------------------------------------
+            ),
+            // ---------------------------------------------------------------------------
+
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // title and expiration date ------------------------------
+                  Text(
+                    post.title,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.timer_outlined,
+                        color: Colors.redAccent,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        "Expires: ${DateFormat('MMMM dd, yyyy').format(post.expiration)}",
+                        style: const TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 40),
+
+                  // description ---------------------------------------------
+                  const Text(
+                    "Description",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    post.description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // dietary tags ---------------------------------------------
+                  if (post.dietary.isNotEmpty) ...[
+                    const Text(
+                      "Dietary Tags",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: post.dietary
+                          .map((tag) => _buildTagChip(tag, BrandColors.green))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 25),
+                  ],
+
+                  // food categories ---------------------------------------------
+                  if (post.category.isNotEmpty) ...[
+                    const Text(
+                      "Food Categories",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: post.category
+                          .map((cat) => _buildTagChip(cat, Colors.blue))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+
+                  _buildActionButton(
+                    context,
+                    currentUserId,
+                    transactionProvider,
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context,
+    String? currentUserId,
+    TransactionsProvider provider,
+  ) {
+    // if user is the owner of the post ------------------------------
+    if (post.userId == currentUserId) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.blue.withOpacity(0.3)),
+        ),
+        child: const Text(
+          "You posted this item",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
+    // post status ---------------------------------------------
+    // transaction not working yet
+    if (post.status == PostStatus.reserved) {
+      return _disabledButton("RESERVED", Colors.orange);
+    }
+    if (post.status == PostStatus.completed) {
+      return _disabledButton("COMPLETED", const Color.fromARGB(255, 18, 167, 68));
+    }
+
+    // request item ---------------------------------------------
+    return PrimaryButton(
+      onPressed: () => _handleRequest(context, currentUserId),
+      text: 'REQUEST ITEM',
+      style: 'yellow',
+      size: const Size(double.infinity, 55),
+    );
+  }
+
+  Widget _disabledButton(String label, Color color) {
+    return Container(
+      width: double.infinity,
+      height: 55,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleRequest(
+    BuildContext context,
+    String? currentUserId,
+  ) async {
+    if (currentUserId == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Request Item'),
+        content: Text('Send a request to the owner for "${post.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Confirm',
+              style: TextStyle(
+                color: BrandColors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      // Logic to create transaction document
+      await context.read<TransactionsProvider>().addTransaction(
+        PostTransaction(
+          postId: post.id!,
+          giverId: post.userId!,
+          receiverId: currentUserId,
+          status: TransactionStatus.pending,
+          createdAt: DateTime.now(),
+        ),
+        post.userId!,
+        post.id!,
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Request sent! Status will update to RESERVED once the owner accepts.',
+            ),
+            backgroundColor: BrandColors.green,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    }
+  }
+}
+
+Widget _buildTagChip(String label, Color color) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: color),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(color: color, fontWeight: FontWeight.w600),
+    ),
+  );
+}
