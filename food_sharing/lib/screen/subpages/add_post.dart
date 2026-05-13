@@ -1,12 +1,12 @@
 // --------------- IMPORTS ---------------
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:food_sharing/constants.dart';
 import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/component/buttons.dart';
+import 'package:food_sharing/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
@@ -445,7 +445,7 @@ class _AddPostPageState extends State<AddPostPage> {
                     children: FoodTags.dietaryTags.map((tag) {
                       final selected = _selectedDietary.contains(tag);
 
-                      return _SelectableChip(
+                      return SelectableChip(
                         label: tag,
                         selected: selected,
                         onTap: () => _toggleTag(tag),
@@ -467,7 +467,7 @@ class _AddPostPageState extends State<AddPostPage> {
                     children: FoodTags.categoryTags.map((category) {
                       final selected = _selectedCategories.contains(category);
 
-                      return _SelectableChip(
+                      return SelectableChip(
                         label: category,
                         selected: selected,
                         onTap: () => _toggleCategory(category),
@@ -501,43 +501,3 @@ class _AddPostPageState extends State<AddPostPage> {
 }
 
 // CHIP ---------------
-class _SelectableChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _SelectableChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-
-        decoration: BoxDecoration(
-          color: selected ? BrandColors.green : Colors.white,
-
-          borderRadius: BorderRadius.circular(20),
-
-          border: Border.all(color: BrandColors.green),
-        ),
-
-        child: Text(
-          label,
-
-          style: TextStyle(
-            fontSize: 12,
-            color: selected ? Colors.white : BrandColors.green,
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ),
-    );
-  }
-}

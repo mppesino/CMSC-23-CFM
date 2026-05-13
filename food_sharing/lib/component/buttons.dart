@@ -59,3 +59,44 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
+
+class SelectableChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const SelectableChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+
+        decoration: BoxDecoration(
+          color: selected ? BrandColors.green : Colors.white,
+
+          borderRadius: BorderRadius.circular(20),
+
+          border: Border.all(color: BrandColors.green),
+        ),
+
+        child: Text(
+          label,
+
+          style: TextStyle(
+            fontSize: 12,
+            color: selected ? Colors.white : BrandColors.green,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+}
