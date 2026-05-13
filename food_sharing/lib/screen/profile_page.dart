@@ -4,7 +4,6 @@ import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/component/sections.dart';
 import 'package:food_sharing/models/user.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
-import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -24,9 +23,9 @@ class ProfilePageState extends State<ProfilePage> {
     final postsProvider = context.watch<PostsProvider>();
 
   return Scaffold(
-    appBar: widget.showAppBar ? AppBar(title:Text("@${widget.user?.userName ?? "user"}", style:TextStyleTheme.subtitle_bold), backgroundColor: BrandColors.cream,) : null,
+    appBar: widget.showAppBar ? AppBar(title:Text("@${widget.user.userName}", style:TextStyleTheme.subtitle_bold), backgroundColor: BrandColors.cream,) : null,
     body: PostFeed(
-      stream: postsProvider.getPostsByUser(widget.user?.userId ?? ""),
+      stream: postsProvider.getPostsByUser(widget.user.userId ?? ""),
       type: FeedType.profile,
       header: Column(
         children: [
@@ -48,15 +47,15 @@ class ProfilePageState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${widget.user?.firstName} ${widget.user?.lastName}",
+                          "${widget.user.firstName} ${widget.user.lastName}",
                           style: TextStyleTheme.subtitle_bold,
                         ),
-                        Text(widget.user?.bio ?? "This is my bio!", style: TextStyleTheme.body,),
+                        Text(widget.user.bio ?? "This is my bio!", style: TextStyleTheme.body,),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
                           runSpacing: 4,
-                          children: (widget.user?.tags ?? [])
+                          children: (widget.user.tags ?? [])
                               .map(_buildTags)
                               .toList(),
                         ),

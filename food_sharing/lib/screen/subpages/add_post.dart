@@ -1,8 +1,6 @@
 // --------------- IMPORTS ---------------
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
@@ -27,7 +25,6 @@ class AddPostPage extends StatefulWidget {
 class _AddPostPageState extends State<AddPostPage> {
   final _titleController = TextEditingController();
   final _captionController = TextEditingController();
-  XFile? _imageFile;
   DateTime? _expiration;
   final List<String> _selectedTags = [];
   bool _isLoading = false;
@@ -161,7 +158,6 @@ class _AddPostPageState extends State<AddPostPage> {
   // --------------- UI ---------------
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UsersProvider>().currentUser;
 
     return Scaffold(
       backgroundColor: BrandColors.cream,

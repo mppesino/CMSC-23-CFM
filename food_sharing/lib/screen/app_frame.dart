@@ -43,7 +43,7 @@ class AppFrameState extends State<AppFrame> {
           },
         ),
         title: Text(
-          _selectedIndex != 2 ? "Salo" : user?.userName ?? "User",
+          _selectedIndex != 2 ? "Salo" : user.userName,
           style: _selectedIndex == 1 
               ? TextStyleTheme.heading_white 
               : _selectedIndex == 2 

@@ -1,7 +1,5 @@
 // --------------- IMPORTS ---------------
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/component/posts.dart';
 
 import 'package:food_sharing/provider/posts_provider.dart';
