@@ -8,7 +8,6 @@ import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/component/buttons.dart';
 import 'package:food_sharing/utils.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
 // ---------------  ---------------
 
@@ -24,27 +23,17 @@ class AddPostPage extends StatefulWidget {
 
 // --------------- STATE CLASS ---------------
 class _AddPostPageState extends State<AddPostPage> {
-  // controller for desc field ---------------
   final _captionController = TextEditingController();
-  // stores image ---------------
   File? _imageFile;
-  // stores expiration date ---------------
   DateTime? _expiration;
-  // stores dietary tags ---------------
-  final List<String> _selectedDietary = [];
-  // stores food categories ---------------
-  final List<String> _selectedCategories = [];
-  // loading state ---------------
+  final List<String> _selectedTags = [];
   bool _isLoading = false;
 
-  // --------------- DISPOSE ---------------
-  // removes text when screen is closed, for memory leak prevention
   @override
   void dispose() {
     _captionController.dispose();
     super.dispose();
   }
-  // ---------------  ---------------
 
   // --------------- IMAGE FOR POST ---------------
   Future<void> _pickImage() async {
@@ -97,33 +86,6 @@ class _AddPostPageState extends State<AddPostPage> {
     }
   }
 
-  // --------------- SAVES IMAGE IN THE FIREBASE ---------------
-  // not working yet!!
-  // maybe the error is here but i cant find!!
-  Future<String?> _uploadImage(File file, String postId) async {
-    try {
-      // location of the firebase ---------------
-      final ref = FirebaseStorage.instance
-          .ref()
-          // sets folder name and uses postId as filename ---------------
-          .child('post_images/$postId.jpg');
-
-      // uploads file to firebase ---------------
-      UploadTask uploadTask = ref.putFile(file);
-      // waits for upload to finish ---------------
-      TaskSnapshot snapshot = await uploadTask;
-
-      // get img download url ---------------
-      // image is saved in storage & the link is saved in the database
-      // so everyone can view the picture
-      final String downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
-      // error handling ---------------
-    } catch (e) {
-      debugPrint('Image upload error: $e');
-      return null;
-    }
-  }
 
   // --------------- POST ---------------
   Future<void> _submit() async {
@@ -198,25 +160,8 @@ class _AddPostPageState extends State<AddPostPage> {
     // ------------------------------
 
     // THIS IS FOR TESTING ONLY, DELETE IF IMAGE IS WORKING ALREADY
-    String? imageUrl;
+    String? foodPicture;
 
-    if (_imageFile != null) {
-      imageUrl = await _uploadImage(_imageFile!, tempId);
-
-      // upload failed ---------------
-      if (imageUrl == null) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to upload image.')),
-        );
-
-        return;
-      }
-    }
-    // ---------------------------------------------------------------------------
 
     // create post object ---------------
     final post = Post(
@@ -224,10 +169,9 @@ class _AddPostPageState extends State<AddPostPage> {
       title: _captionController.text.trim(), // uses the desc as a title
       description: _captionController.text.trim(), // DESCRIPTION
       status: PostStatus.available, // default status
-      dietary: _selectedDietary, // dietary tags
-      category: _selectedCategories, // category tags
+      tags: _selectedTags, // dietary tags
       expiration: _expiration!, // expiration date
-      imageUrl: imageUrl, // image
+      foodPicture: foodPicture, // image
     );
 
     // save post to firestore
@@ -250,28 +194,14 @@ class _AddPostPageState extends State<AddPostPage> {
   // --------------- DIETARY TAGS TOGGLE ---------------
   void _toggleTag(String tag) {
     setState(() {
-      // remove if already selected ---------------
-      if (_selectedDietary.contains(tag)) {
-        _selectedDietary.remove(tag);
+      if (_selectedTags.contains(tag)) {
+        _selectedTags.remove(tag);
       } else {
-        // add if not selected ---------------
-        _selectedDietary.add(tag);
+        _selectedTags.add(tag);
       }
     });
   }
 
-  // --------------- CATEGORY TAGS TOGGLE ---------------
-  void _toggleCategory(String category) {
-    setState(() {
-      // remove if already selected ---------------
-      if (_selectedCategories.contains(category)) {
-        _selectedCategories.remove(category);
-      } else {
-        // add if not selected ---------------
-        _selectedCategories.add(category);
-      }
-    });
-  }
 
   // --------------- UI ---------------
   @override
@@ -443,7 +373,7 @@ class _AddPostPageState extends State<AddPostPage> {
                     runSpacing: 8,
 
                     children: FoodTags.dietaryTags.map((tag) {
-                      final selected = _selectedDietary.contains(tag);
+                      final selected = _selectedTags.contains(tag);
 
                       return SelectableChip(
                         label: tag,
@@ -465,12 +395,12 @@ class _AddPostPageState extends State<AddPostPage> {
                     runSpacing: 8,
 
                     children: FoodTags.categoryTags.map((category) {
-                      final selected = _selectedCategories.contains(category);
+                      final selected = _selectedTags.contains(category);
 
                       return SelectableChip(
                         label: category,
                         selected: selected,
-                        onTap: () => _toggleCategory(category),
+                        onTap: () => _toggleTag(category),
                       );
                     }).toList(),
                   ),

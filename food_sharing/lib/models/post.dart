@@ -6,10 +6,9 @@ class Post {
   String title;
   String description;
   PostStatus status;
-  List<String> dietary;
-  List<String> category;
+  List<String> tags;
   DateTime expiration;
-  String? imageUrl;
+  String? foodPicture;
 
   Post({
     this.id,
@@ -17,10 +16,9 @@ class Post {
     required this.title,
     required this.description,
     required this.status,
-    required this.dietary,
-    required this.category,
+    required this.tags,
     required this.expiration,
-    this.imageUrl,
+    this.foodPicture,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -33,10 +31,9 @@ class Post {
         (e) => e.name == json['status'],
         orElse: () => PostStatus.available,
       ),
-      dietary: List<String>.from(json['dietary'] ?? json['tags'] ?? []),
-      category: List<String>.from(json['category'] ?? json['tag'] ?? []),
+      tags: List<String>.from(json['tags'] ?? []),
       expiration: DateTime.parse(json['expiration'] as String),
-      imageUrl: json['imageUrl'] as String?,
+      foodPicture: json['foodPicture'] as String?,
     );
   }
 
@@ -47,10 +44,9 @@ class Post {
       'title': title,
       'description': description,
       'status': status.name,
-      'dietary': dietary,
-      'category': category,
+      'tags': tags,
       'expiration': expiration.toIso8601String(),
-      'imageUrl': imageUrl,
+      'foodPicture': foodPicture,
     };
   }
 }

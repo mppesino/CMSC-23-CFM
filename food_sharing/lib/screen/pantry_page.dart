@@ -112,9 +112,9 @@ class _PostCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: AspectRatio(
                   aspectRatio: 1.1,
-                  child: (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+                  child: (post.foodPicture!= null && post.foodPicture!.isNotEmpty)
                       ? Image.network(
-                          post.imageUrl!,
+                          post.foodPicture!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => _imagePlaceholder(),
                         )
@@ -140,8 +140,7 @@ class _PostCard extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    ...post.dietary.map((tag) => _smallTag(tag)),
-                    ...post.category.map((cat) => _smallTag(cat)),
+                    ...post.tags.map((tag) => _smallTag(tag)),
                   ],
                 ),
               ),

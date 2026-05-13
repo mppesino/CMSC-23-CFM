@@ -6,6 +6,7 @@ import 'package:food_sharing/provider/transactions_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/component/buttons.dart';
+import 'package:food_sharing/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 // ---------------------------------------------
@@ -18,7 +19,15 @@ class PostDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentUserId = context.watch<UsersProvider>().currentUser?.userId; // post object
     final transactionProvider = context.watch<TransactionsProvider>(); // constructor
-
+    final selectedDietary = post.tags
+        .where((tag) => FoodTags.dietaryTags.contains(tag))
+        .toList()
+        ..sort((a, b) => FoodTags.dietaryTags.indexOf(a).compareTo(FoodTags.dietaryTags.indexOf(b)));
+    final selectedCategories = post.tags
+        .where((tag) => FoodTags.categoryTags.contains(tag))
+        .toList()
+        ..sort((a, b) => FoodTags.categoryTags.indexOf(a).compareTo(FoodTags.categoryTags.indexOf(b)));
+    
     // UI DESIGN ---------------
     return Scaffold(
       backgroundColor: BrandColors.cream,
@@ -41,9 +50,9 @@ class PostDetailPage extends StatelessWidget {
               color: Colors.grey[200],
               // fetch the image url ---------------
               // NOT WORKING YET!!
-              child: post.imageUrl != null && post.imageUrl!.isNotEmpty
+              child: post.foodPicture != null && post.foodPicture!.isNotEmpty
                   ? Image.network(
-                      post.imageUrl!,
+                      post.foodPicture!,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         // if done loading, show the img ---------------
@@ -122,7 +131,7 @@ class PostDetailPage extends StatelessWidget {
                   const SizedBox(height: 25),
 
                   // dietary tags ---------------------------------------------
-                  if (post.dietary.isNotEmpty) ...[
+                  if (selectedDietary.isNotEmpty) ...[
                     const Text(
                       "Dietary Tags",
                       style: TextStyle(
@@ -134,7 +143,7 @@ class PostDetailPage extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: post.dietary
+                      children: selectedDietary
                           .map((tag) => _buildTagChip(tag, BrandColors.green))
                           .toList(),
                     ),
@@ -142,7 +151,7 @@ class PostDetailPage extends StatelessWidget {
                   ],
 
                   // food categories ---------------------------------------------
-                  if (post.category.isNotEmpty) ...[
+                  if (selectedCategories.isNotEmpty) ...[
                     const Text(
                       "Food Categories",
                       style: TextStyle(
@@ -154,7 +163,7 @@ class PostDetailPage extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: post.category
+                      children: selectedCategories
                           .map((cat) => _buildTagChip(cat, Colors.blue))
                           .toList(),
                     ),
