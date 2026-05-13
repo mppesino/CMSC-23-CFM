@@ -132,8 +132,6 @@ class _AddPostPageState extends State<AddPostPage> {
     // post provider ---------------
     final postsProvider = context.read<PostsProvider>();
 
-    // temporary id ---------------
-    final tempId = DateTime.now().millisecondsSinceEpoch.toString();
 
     // upload the image ---------------
     // COMMENTED FOR TESTING
