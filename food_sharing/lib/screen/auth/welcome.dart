@@ -96,7 +96,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 12),
 
                     const Text(
-                      'Thank you for being part of our SALO community!',
+                      'Thank you for being part of our SALO community! Please choose your dietary preferences.',
                     ),
 
                     const SizedBox(height: 20),
