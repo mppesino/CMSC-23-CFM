@@ -6,7 +6,7 @@ import 'package:food_sharing/theme/app_theme.dart';
 // For primary control buttons of the app
 // For example: Log-in, Sign-up Button
 class PrimaryButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String? text;      // Changed to optional
   final IconData? icon;    // Added icon data
   final String style; 

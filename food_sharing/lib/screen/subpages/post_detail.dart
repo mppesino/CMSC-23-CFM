@@ -1,16 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/models/post.dart';
-import 'package:food_sharing/models/transaction.dart';
-import 'package:food_sharing/models/user.dart';
-import 'package:food_sharing/provider/transactions_provider.dart';
+import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
+import 'package:food_sharing/screen/component/profile.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/screen/component/buttons.dart';
 import 'package:food_sharing/screen/component/posts.dart';
-
-import 'package:food_sharing/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -22,15 +20,15 @@ class PostDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final transactionProvider = context.watch<TransactionsProvider>(); // constructor
+    final postsProvider = context.watch<PostsProvider>();
     final usersProvider = context.watch<UsersProvider>();
 
     Color tagColor = BrandColors.gray;
-    if(post.status == PostStatus.Available){
+    if(post.status == PostStatus.available){
       tagColor = BrandColors.green;
-    } else if (post.status == PostStatus.Reserved){
+    } else if (post.status == PostStatus.reserved){
       tagColor = BrandColors.yellow;
-    } else if (post.status == PostStatus.Unavailable){
+    } else if (post.status == PostStatus.completed){
       tagColor = BrandColors.gray;
     } 
 
@@ -101,6 +99,7 @@ class PostDetailPage extends StatelessWidget {
                   const SizedBox(height: 25),
                   ],
 
+                
 
                   const Text(
                     "Status",
@@ -110,9 +109,10 @@ class PostDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _buildTagChip(post.status.name, tagColor),
+                  _buildTagChip(post.status == PostStatus.available ? "Available" 
+                                : post.status == PostStatus.reserved ? "Reserved"
+                                : post.status == PostStatus.completed ? "Completed" : "Error", tagColor),
                   const SizedBox(height: 25),
-
 
                   Row(
                     children: [
@@ -135,6 +135,9 @@ class PostDetailPage extends StatelessWidget {
 
                 const SizedBox(height: 25),
 
+                post.userId == usersProvider.currentUser?.userId ?
+                _buildGiverView(context, post)
+                :_buildRequesterView(context, post, usersProvider.currentUser?.userId ?? "")
 
                 ],
               ),
@@ -145,11 +148,102 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  Future<void> _handleRequest(
+Widget _buildGiverView(BuildContext context, Post post) {
+  final requesterIds = post.requesterIds ?? [];
+
+  if (requesterIds.isEmpty) {
+    return const Center(child:Text("No requests yet"));
+  }
+
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: requesterIds.length,
+    itemBuilder: (context, index) {
+      final requesterId = requesterIds[index];
+
+      return FutureBuilder(
+        future: context.read<UsersProvider>().getUserById(requesterId),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const ListTile(title: Text("Loading..."));
+          }
+
+          final user = snapshot.data!;
+
+          return Card(
+            child: ListTile(
+              title: Text(user.userName),
+              subtitle: const Text("Requested this item"),
+              trailing: ElevatedButton(
+                child: const Text("Accept"),
+                onPressed: () async {
+                  await context.read<PostsProvider>().editPost(
+                    post.id!,
+                    {
+                      'reservedForId': requesterId,
+                      'status': PostStatus.reserved.name,
+                    },
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+  Widget _buildRequesterView(BuildContext context, Post post, String currentUid){
+
+    bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
+  
+    return(
+      Column(children: [
+       !alreadyRequested ? TextField(
+          controller: _commentController,
+          maxLines: 1,
+          cursorColor: BrandColors.darkGreen,
+          decoration: InputDecoration(
+            hintText: 'Why do you need this item?',
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            label: Text("Appeal"),
+            labelStyle: TextStyle(color: BrandColors.darkGreen),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ) : const SizedBox.shrink(),
+        const SizedBox(height: 15),
+        Center(child: _buildRequestButton(context, post, currentUid, alreadyRequested))
+      ],)
+    );
+  }
+
+Widget _buildRequestButton(BuildContext context, Post post, String currentUid,  bool alreadyRequested) {
+
+
+  final bool disabled =
+      post.status == PostStatus.reserved || alreadyRequested;
+
+  return PrimaryButton(
+    text:  !disabled? "Request Item" : alreadyRequested? "Requested" : "Reserved",
+    onPressed: disabled ? null : () {
+      _handleRequest(context, currentUid, post);
+    },
+    style: disabled ? "gray" : "green",
+  );
+}
+
+Future<void> _handleRequest(
     BuildContext context,
-    String? currentUserId,
+    String? currentUid,
+    Post post
   ) async {
-    if (currentUserId == null) return;
+    if (currentUid == null) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -176,15 +270,11 @@ class PostDetailPage extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await context.read<TransactionsProvider>().addTransaction(
-        PostTransaction(
-          postId: post.id!,
-          giverId: post.userId!,
-          requesterId: currentUserId,
-          status: TransactionStatus.pending,
-          comment: _commentController.text,
-          createdAt: DateTime.now(),
-        ),
+      await context.read<PostsProvider>().editPost(
+        post.id!,
+        {
+        'requesterIds': FieldValue.arrayUnion([currentUid]),
+        }
       );
 
       if (context.mounted) {

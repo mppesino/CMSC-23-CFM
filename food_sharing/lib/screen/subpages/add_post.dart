@@ -121,7 +121,7 @@ class _AddPostPageState extends State<AddPostPage> {
       userId: uid, // poster
       title: _titleController.text.trim(), 
       description: _captionController.text.trim(), // DESCRIPTION
-      status: PostStatus.Available, // default status
+      status: PostStatus.available, // default status
       tags: _selectedTags, // dietary tags
       expiration: _expiration!, // expiration date
       foodPicture: foodPicture, // image

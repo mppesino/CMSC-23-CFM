@@ -1,4 +1,4 @@
-enum PostStatus { Available, Reserved, Unavailable }
+enum PostStatus { available, reserved, completed }
 
 class Post {
   String? id;
@@ -9,6 +9,8 @@ class Post {
   List<String> tags;
   DateTime expiration;
   String? foodPicture;
+  String? reservedForId;
+  List<String> requesterIds;
 
   Post({
     this.id,
@@ -19,34 +21,55 @@ class Post {
     required this.tags,
     required this.expiration,
     this.foodPicture,
+    this.reservedForId,
+    this.requesterIds = const [],
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      userId: json['userId'] as String?,
       id: json['id'] as String?,
-      title: json['title'] as String,
-      description: json['description'] as String,
+      userId: json['userId'] as String?,
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       status: PostStatus.values.firstWhere(
         (e) => e.name == json['status'],
-        orElse: () => PostStatus.Available,
+        orElse: () => PostStatus.available,
       ),
-      tags: List<String>.from(json['tags'] ?? []),
-      expiration: DateTime.parse(json['expiration'] as String),
+
+      tags: (json['tags'] as List?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+
+      requesterIds: (json['requesterIds'] as List?)
+              ?.where((e) => e != null)
+              .map((e) => e.toString())
+              .toList() ??
+          [],
+
+    expiration: json['expiration'] is String
+        ? DateTime.parse(json['expiration'])
+        : json['expiration'] != null
+            ? (json['expiration'] as dynamic).toDate()
+            : DateTime.now(),
+            
       foodPicture: json['foodPicture'] as String?,
+      reservedForId: json['reservedForId'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
       'id': id,
+      'userId': userId,
       'title': title,
       'description': description,
       'status': status.name,
       'tags': tags,
       'expiration': expiration.toIso8601String(),
       'foodPicture': foodPicture,
+      'reservedForId': reservedForId,
+      'requesterIds': requesterIds,
     };
   }
 }

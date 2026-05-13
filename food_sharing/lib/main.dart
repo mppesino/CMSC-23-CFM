@@ -7,7 +7,6 @@ import 'firebase_options.dart';
 import 'package:food_sharing/provider/auth_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
-import 'package:food_sharing/provider/transactions_provider.dart';
 
 // Screens
 import 'package:food_sharing/auth_gate.dart';
@@ -41,7 +40,6 @@ Future<void> main() async {
             return usersProvider!;
           },
         ),
-        ChangeNotifierProvider(create: (_) => TransactionsProvider()),
       ],
       child: FoodSharing(),
     ),

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:food_sharing/api/firebase_posts_api.dart';
-import 'package:food_sharing/models/transaction.dart';
 import '../models/post.dart';
 
 class PostsProvider with ChangeNotifier {
@@ -38,7 +37,7 @@ class PostsProvider with ChangeNotifier {
     return firebaseService.deletePost(id);
   }
 
-  Future<void> updatePostStatus(String id, TransactionStatus status) {
+  Future<void> updatePostStatus(String id, PostStatus status) {
     return firebaseService.updatePostStatus(id, status);
   }
 }

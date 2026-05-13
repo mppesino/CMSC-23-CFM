@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food_sharing/screen/component/drawer.dart';
 import 'package:food_sharing/provider/users_provider.dart';
-import 'package:food_sharing/screen/pantry_page.dart'; // <--- Add this import
+import 'package:food_sharing/screen/pantry_page.dart';  
 import 'package:food_sharing/screen/profile_page.dart';
-import 'package:food_sharing/screen/request_page.dart';
 import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:food_sharing/models/transaction.dart';
+import 'package:food_sharing/models/post.dart';
 
 class FirebasePostsApi {
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -54,7 +54,7 @@ class FirebasePostsApi {
     }
   }
 
-  Future<String> updatePostStatus(String id, TransactionStatus status) async {
+  Future<String> updatePostStatus(String id, PostStatus status) async {
     try {
       await db.collection('posts').doc(id).update({
         'status': status.name,
