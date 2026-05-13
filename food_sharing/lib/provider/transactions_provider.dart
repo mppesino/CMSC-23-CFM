@@ -19,7 +19,7 @@ class TransactionsProvider with ChangeNotifier{
     notifyListeners();
   }
 
-    Future<PostTransaction?> getTransactionById(String id) async {
+  Future<PostTransaction?> getTransactionById(String id) async {
     try {
       DocumentSnapshot doc = await firebaseService.getTransaction(id);
       
@@ -33,8 +33,16 @@ class TransactionsProvider with ChangeNotifier{
     }
   }
 
-  Future<void> addTransaction(PostTransaction transaction, String giverId, String postId) async {
-    String message = await firebaseService.addTransaction(transaction.toJson(), giverId, postId);
+  Stream<QuerySnapshot> getTransactionsByRequester(String uid) {
+    return firebaseService.getTransactionsByGiver(uid);
+  }
+
+  Stream<QuerySnapshot> getTransactionsByGiver(String uid) {
+    return firebaseService.getTransactionsByGiver(uid);
+  }
+
+  Future<void> addTransaction(PostTransaction transaction) async {
+    String message = await firebaseService.addTransaction(transaction.toJson());
     print(message);
     notifyListeners();
   }

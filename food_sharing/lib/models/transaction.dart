@@ -4,7 +4,8 @@ class PostTransaction {
   String? id;
   String postId;
   String giverId;
-  String receiverId;
+  String requesterId;
+  String? comment;
   TransactionStatus status;
   DateTime createdAt;
 
@@ -12,7 +13,8 @@ class PostTransaction {
     this.id,
     required this.postId,
     required this.giverId,
-    required this.receiverId,
+    required this.requesterId,
+    this.comment,
     required this.status,
     required this.createdAt,
   });
@@ -22,7 +24,8 @@ class PostTransaction {
       id: json['id'] as String?,
       postId: json['postId'] as String,
       giverId: json['giverId'] as String,
-      receiverId: json['receiverId'] as String,
+      requesterId: json['requesterId'] as String,
+      comment: json['comment'] as String,
       status: TransactionStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => TransactionStatus.pending,
@@ -36,7 +39,8 @@ class PostTransaction {
       'id': id,
       'postId': postId,
       'giverId': giverId,
-      'receiverId': receiverId,
+      'requesterId': requesterId,
+      'comment': comment,
       'status': status.name,
       'createdAt': createdAt.toIso8601String(),
     };

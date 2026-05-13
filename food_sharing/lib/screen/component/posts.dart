@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:food_sharing/component/profile.dart';
+import 'package:food_sharing/screen/component/profile.dart';
 import 'package:food_sharing/screen/profile_page.dart';
 import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/models/user.dart';
@@ -174,12 +174,16 @@ class PostFeed extends StatelessWidget {
   final Stream stream;
   final FeedType type;
   final Widget? header;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
 
   const PostFeed({
     super.key,
     required this.stream,
     required this.type,
     this.header,
+    this.shrinkWrap = false,
+    this.physics,
   });
 
 
@@ -198,6 +202,7 @@ class PostFeed extends StatelessWidget {
 
     return StreamBuilder(
       stream: stream,
+      
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
@@ -223,6 +228,8 @@ class PostFeed extends StatelessWidget {
         }
 
         return ListView.separated(
+          shrinkWrap: shrinkWrap,
+          physics: physics,
           itemCount: posts.length + (header != null ? 1 : 0),
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {

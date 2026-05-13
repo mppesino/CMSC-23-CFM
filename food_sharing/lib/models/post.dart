@@ -1,4 +1,4 @@
-enum PostStatus { available, requested, reserved, completed }
+enum PostStatus { Available, Reserved, Unavailable }
 
 class Post {
   String? id;
@@ -29,7 +29,7 @@ class Post {
       description: json['description'] as String,
       status: PostStatus.values.firstWhere(
         (e) => e.name == json['status'],
-        orElse: () => PostStatus.available,
+        orElse: () => PostStatus.Available,
       ),
       tags: List<String>.from(json['tags'] ?? []),
       expiration: DateTime.parse(json['expiration'] as String),

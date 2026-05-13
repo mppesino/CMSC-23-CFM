@@ -5,7 +5,7 @@ import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
-import 'package:food_sharing/component/buttons.dart';
+import 'package:food_sharing/screen/component/buttons.dart';
 import 'package:food_sharing/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -121,7 +121,7 @@ class _AddPostPageState extends State<AddPostPage> {
       userId: uid, // poster
       title: _titleController.text.trim(), 
       description: _captionController.text.trim(), // DESCRIPTION
-      status: PostStatus.available, // default status
+      status: PostStatus.Available, // default status
       tags: _selectedTags, // dietary tags
       expiration: _expiration!, // expiration date
       foodPicture: foodPicture, // image

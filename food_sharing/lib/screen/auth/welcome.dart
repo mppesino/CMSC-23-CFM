@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:food_sharing/component/buttons.dart';
-import 'package:food_sharing/component/layouts.dart';
+import 'package:food_sharing/screen/component/buttons.dart';
+import 'package:food_sharing/screen/component/layouts.dart';
 import 'package:food_sharing/utils.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:provider/provider.dart';

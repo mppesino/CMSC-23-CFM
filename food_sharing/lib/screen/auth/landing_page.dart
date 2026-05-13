@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:food_sharing/component/buttons.dart';
-import 'package:food_sharing/component/layouts.dart';
+import 'package:food_sharing/screen/component/buttons.dart';
+import 'package:food_sharing/screen/component/layouts.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 class LandingPage extends StatelessWidget {
   final String title;
