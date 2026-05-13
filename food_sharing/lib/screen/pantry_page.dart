@@ -26,7 +26,7 @@ class PantryPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             Expanded(child: PostFeed(stream: postsProvider.post, emptyText: "No items in the pantry yet.",)),
+             Expanded(child: PostFeed(stream: postsProvider.getAllPosts(), type: FeedType.pantry,)),
             ],
           ),
         ),

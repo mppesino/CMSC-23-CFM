@@ -1,4 +1,6 @@
 // --------------- IMPORTS ---------------
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/models/transaction.dart';
@@ -32,10 +34,10 @@ class PostDetailPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: BrandColors.cream,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: BrandColors.cream,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: const Text("Item Details"),
+        title: Text(post.title, style: TextStyleTheme.subtitle_bold,),
       ),
     // ------------------------------
 
@@ -51,20 +53,9 @@ class PostDetailPage extends StatelessWidget {
               // fetch the image url ---------------
               // NOT WORKING YET!!
               child: post.foodPicture != null && post.foodPicture!.isNotEmpty
-                  ? Image.network(
-                      post.foodPicture!,
+                  ? Image.memory(
+                      base64Decode(post.foodPicture!),
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        // if done loading, show the img ---------------
-                        if (loadingProgress == null) return child;
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: BrandColors.green,
-                          ),
-                        );
-                      },
-                      // ---------------------------------------------
-                      // if image fails to load, put a placeholder ---------------
                       errorBuilder: (_, __, ___) => const Center(
                         child: Icon(
                           Icons.broken_image,
@@ -85,14 +76,6 @@ class PostDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // title and expiration date ------------------------------
-                  Text(
-                    post.title,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -200,28 +183,24 @@ class PostDetailPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.blue.withOpacity(0.3)),
         ),
-        child: const Text(
-          "You posted this item",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-        ),
+        child: Row(children: [],)
       );
     }
 
     // post status ---------------------------------------------
     // transaction not working yet
     if (post.status == PostStatus.reserved) {
-      return _disabledButton("RESERVED", Colors.orange);
+      return _disabledButton("Reserved", Colors.orange);
     }
     if (post.status == PostStatus.completed) {
-      return _disabledButton("COMPLETED", const Color.fromARGB(255, 18, 167, 68));
+      return _disabledButton("Completed", const Color.fromARGB(255, 18, 167, 68));
     }
 
     // request item ---------------------------------------------
     return PrimaryButton(
       onPressed: () => _handleRequest(context, currentUserId),
-      text: 'REQUEST ITEM',
-      style: 'yellow',
+      text: 'Request Item',
+      style: 'green',
       size: const Size(double.infinity, 55),
     );
   }

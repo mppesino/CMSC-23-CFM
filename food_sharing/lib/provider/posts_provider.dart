@@ -1,50 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:food_sharing/models/post.dart'; // Import the model from the file above
+import 'package:flutter/foundation.dart';
+import 'package:food_sharing/api/firebase_posts_api.dart';
+import 'package:food_sharing/models/transaction.dart';
+import '../models/post.dart';
 
-class PostsProvider extends ChangeNotifier {
+class PostsProvider with ChangeNotifier {
+  final FirebasePostsApi firebaseService = FirebasePostsApi();
 
-  // Stream used by the _PostsFeed in PantryPage
-  Stream<QuerySnapshot> get post {
-    return _firestore
-        .collection('posts')
-        .orderBy('expiration', descending: false)
-        .snapshots();
+  Stream<QuerySnapshot> getAllPosts() {
+    return firebaseService.getAllPosts();
   }
 
-  Stream<QuerySnapshot> userPost(String userId) {
-    return _firestore
-        .collection('posts')
-        .where('userId', isEqualTo: userId)
-        .orderBy('expiration', descending: false)
-        .snapshots();
+  Stream<QuerySnapshot> getPostsByUser(String uid) {
+    return firebaseService.getPostsByUser(uid);
   }
 
-  // Method to add a new post to Firestore
-  Future<void> addPost(Post post, String? uid) async {
-    try {
-      // Create a new document reference to get a generated ID
-      final docRef = _firestore.collection('posts').doc();
-      
-      // Update the post object with the new ID
-      post.id = docRef.id;
-      post.userId = uid;
+  Future<Post?> getPostById(String id) async {
+    final doc = await firebaseService.getPost(id);
 
-      // Save to Firestore
-      await docRef.set(post.toJson());
-      
-      notifyListeners();
-    } catch (e) {
-      debugPrint("Error adding post: $e");
-      rethrow;
-    }
+    if (!doc.exists) return null;
+
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+
+    return Post.fromJson(data);
   }
 
-  // Optional: Method to update post status (e.g., to 'reserved')
-  Future<void> updatePostStatus(String postId, PostStatus newStatus) async {
-    await _firestore.collection('posts').doc(postId).update({
-      'status': newStatus.name,
-    });
-    notifyListeners();
+  Future<void> addPost(Post post, String? uid) {
+    return firebaseService.addPost(post.toJson(), uid);
+  }
+
+  Future<void> editPost(String id, Map<String, dynamic> post) {
+    return firebaseService.editPost(id, post);
+  }
+
+  Future<void> deletePost(String id) {
+    return firebaseService.deletePost(id);
+  }
+
+  Future<void> updatePostStatus(String id, TransactionStatus status) {
+    return firebaseService.updatePostStatus(id, status);
   }
 }

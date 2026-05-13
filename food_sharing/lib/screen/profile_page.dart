@@ -1,18 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:food_sharing/component/layouts.dart';
 import 'package:food_sharing/component/posts.dart';
 import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/component/sections.dart';
-import 'package:food_sharing/models/post.dart';
+import 'package:food_sharing/models/user.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final User user;
+  final bool showAppBar;
+
+  const ProfilePage({super.key, required this.user, required this.showAppBar});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -21,11 +21,14 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.watch<UsersProvider>().currentUser;
     final postsProvider = context.watch<PostsProvider>();
 
-    return Scaffold(
-      body: Column(
+  return Scaffold(
+    appBar: widget.showAppBar ? AppBar(title:Text("@${widget.user?.userName ?? "user"}", style:TextStyleTheme.subtitle_bold), backgroundColor: BrandColors.cream,) : null,
+    body: PostFeed(
+      stream: postsProvider.getPostsByUser(widget.user?.userId ?? ""),
+      type: FeedType.profile,
+      header: Column(
         children: [
           SectionCard(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -36,51 +39,27 @@ class ProfilePageState extends State<ProfilePage> {
                 children: [
                   Column(
                     children: [
-                      ProfilePicture(
-                        user: currentUser,
-                      ),
-                      Text(
-                        "@${currentUser?.userName ?? "user"}",
-                        style: TextStyleTheme.body,
-                      ),
+                      ProfilePicture(user: widget.user),
                     ],
                   ),
-
                   const SizedBox(width: 12),
-
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Text(
-                                "${currentUser?.firstName} ${currentUser?.lastName}",
-                                style: TextStyleTheme.subtitle_bold,
-                              ),
-                            ),
-                            
-                          ],
-                        ),
-
                         Text(
-                          currentUser?.bio ?? "This is my bio!",
-                          style: TextStyleTheme.body,
+                          "${widget.user?.firstName} ${widget.user?.lastName}",
+                          style: TextStyleTheme.subtitle_bold,
                         ),
-
+                        Text(widget.user?.bio ?? "This is my bio!", style: TextStyleTheme.body,),
                         const SizedBox(height: 8),
-
                         Wrap(
-                          spacing: 8.0,
-                          runSpacing: 4.0,
-                          children: (currentUser?.tags ?? [])
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: (widget.user?.tags ?? [])
                               .map(_buildTags)
                               .toList(),
                         ),
-
-
                       ],
                     ),
                   ),
@@ -88,14 +67,11 @@ class ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-
-          Expanded(child: PostFeed(stream: postsProvider.userPost(currentUser?.userId ?? ""), emptyText: "User doesn't have any posts."))
-
-
         ],
       ),
-    );
-  }
+    ),
+  );
+    }
 
   Widget _buildTags(String label) {
     return Chip(

@@ -26,7 +26,7 @@ class AppFrameState extends State<AppFrame> {
     final List<Widget> _pages = [
       const PantryPage(), 
       const SearchPage(),
-      ProfilePage(),
+      ProfilePage(user:user!, showAppBar: false,),
     ];
 
     return Scaffold(

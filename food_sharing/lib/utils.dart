@@ -40,6 +40,6 @@ Future<Uint8List> compressImage(XFile file) async {
   final resized = img.copyResize(image, width: 300);
 
   return Uint8List.fromList(
-    img.encodeJpg(resized, quality: 60),
+    img.encodeJpg(resized, quality: 80),
   );
 }

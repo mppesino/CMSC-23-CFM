@@ -1,6 +1,8 @@
 // --------------- IMPORTS ---------------
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
@@ -23,53 +25,52 @@ class AddPostPage extends StatefulWidget {
 
 // --------------- STATE CLASS ---------------
 class _AddPostPageState extends State<AddPostPage> {
+  final _titleController = TextEditingController();
   final _captionController = TextEditingController();
-  File? _imageFile;
+  XFile? _imageFile;
   DateTime? _expiration;
   final List<String> _selectedTags = [];
   bool _isLoading = false;
+  String? foodPicture;
 
   @override
   void dispose() {
+    _titleController.dispose();
     _captionController.dispose();
     super.dispose();
   }
 
   // --------------- IMAGE FOR POST ---------------
   Future<void> _pickImage() async {
-    // creates an instance ---------------
-    final picker = ImagePicker();
-    // opens the device's camera ---------------
-    final picked = await picker.pickImage(
-      // only use the camera (can't upload) ---------------
+    setState(() {
+      _isLoading = true;
+    });
+
+    final image = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      // just for image quality, too high can cause lag ---------------
       imageQuality: 70,
     );
-    // updates UI to display the picture ---------------
-    // it saves the file and automatically triggers ascreen refresh to show it
-    if (picked != null) {
-      setState(() {
-        _imageFile = File(picked.path);
-      });
-    }
+    if (image == null) return;
+    final compressedBytes = await compressImage(image);
+    final encoded = base64Encode(compressedBytes);
+
+    setState(() {
+      foodPicture = encoded;
+    });
+
+    setState(() {
+      _isLoading = false;
+    });
+
   }
 
-  // --------------- DATE PICKER ---------------
   Future<void> _pickExpiration() async {
-    // initializes current time ---------------
     final now = DateTime.now();
-
-    // opens the date picker ---------------
     final picked = await showDatePicker(
       context: context,
-      // default is the current date ---------------
-      // cannot post already expired food ---------------
       initialDate: now.add(const Duration(days: 1)),
       firstDate: now,
-      // can only post foods that has an expiration date of 2 years ---------------
       lastDate: now.add(const Duration(days: 730)),
-      // design ---------------
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: const ColorScheme.light(primary: BrandColors.green),
@@ -78,7 +79,6 @@ class _AddPostPageState extends State<AddPostPage> {
       ),
     );
 
-    // if date is selected, save it ---------------
     if (picked != null) {
       setState(() {
         _expiration = picked;
@@ -89,26 +89,13 @@ class _AddPostPageState extends State<AddPostPage> {
 
   // --------------- POST ---------------
   Future<void> _submit() async {
-    // UNCOMMENT IF FIXED
-    // VALIDATION 1 ---------------
-    // add a picture from the camera ---------------
-    /*
-    if (_imageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Upload an image from your camera.',
-          ),
-        ),
-      );
-      return;
-    }*/
+
 
     // VALIDATION 2 ---------------
     // add a desc for the item ---------------
-    if (_captionController.text.trim().isEmpty) {
+    if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add a description.')),
+        const SnackBar(content: Text('Please add a title.')),
       );
       return;
     }
@@ -132,39 +119,10 @@ class _AddPostPageState extends State<AddPostPage> {
     // post provider ---------------
     final postsProvider = context.read<PostsProvider>();
 
-
-    // upload the image ---------------
-    // COMMENTED FOR TESTING
-    /*final imageUrl =
-        await _uploadImage(_imageFile!, tempId);
-
-    // error handling for image upload ---------------
-    if (imageUrl == null) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Failed to upload image.',
-          ),
-        ),
-      );
-
-      return;
-    }
-    */
-    // ------------------------------
-
-    // THIS IS FOR TESTING ONLY, DELETE IF IMAGE IS WORKING ALREADY
-    String? foodPicture;
-
-
     // create post object ---------------
     final post = Post(
       userId: uid, // poster
-      title: _captionController.text.trim(), // uses the desc as a title
+      title: _titleController.text.trim(), 
       description: _captionController.text.trim(), // DESCRIPTION
       status: PostStatus.available, // default status
       tags: _selectedTags, // dietary tags
@@ -199,7 +157,6 @@ class _AddPostPageState extends State<AddPostPage> {
       }
     });
   }
-
 
   // --------------- UI ---------------
   @override
@@ -247,28 +204,7 @@ class _AddPostPageState extends State<AddPostPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-                  // USER INFO ---------------
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor: BrandColors.gray,
-                        backgroundImage: user?.profilePicture != null
-                            ? NetworkImage(user!.profilePicture!)
-                            : null,
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      Text(
-                        '${user?.firstName ?? "User"} ${user?.lastName ?? ""}',
-                        style: TextStyleTheme.body,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
+   
                   // CAMERA BOX ---------------
                   GestureDetector(
                     onTap: _pickImage,
@@ -286,13 +222,17 @@ class _AddPostPageState extends State<AddPostPage> {
                         ),
                       ),
 
-                      child: _imageFile != null
-                          ? ClipRRect(
+                      child: foodPicture != null
+                            ? ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-
-                              child: Image.file(_imageFile!, fit: BoxFit.cover),
+                              child: SizedBox.expand(
+                                child: Image.memory(
+                                  base64Decode(foodPicture!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             )
-                          : Column(
+                            :  Column(
                               mainAxisAlignment: MainAxisAlignment.center,
 
                               children: [
@@ -315,16 +255,36 @@ class _AddPostPageState extends State<AddPostPage> {
 
                   const SizedBox(height: 20),
 
+        // DESCRIPTION ---------------
+                  TextField(
+                    controller: _titleController,
+                    maxLines: 1,
+                    
+                    decoration: InputDecoration(
+                      hintText: 'e.g. 3 extra Eggs...',
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      label: Text("Title"),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+
                   // DESCRIPTION ---------------
                   TextField(
                     controller: _captionController,
-                    maxLines: 2,
+                    maxLines: 3,
 
                     decoration: InputDecoration(
-                      hintText: 'e.g. 3 extra Eggs from breakfast...',
+                      hintText: 'Describe the item',
                       filled: true,
                       fillColor: Colors.grey.shade100,
-
+                      label: Text("Caption"),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,

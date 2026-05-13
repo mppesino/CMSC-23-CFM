@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:food_sharing/screen/subpages/post_detail.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -29,6 +30,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppAuthProvider()),
+        ChangeNotifierProvider(create: (_) => PostsProvider()),
+
         ChangeNotifierProxyProvider<AppAuthProvider, UsersProvider>(
           create: (_) => UsersProvider(),
           update: (_, authProvider, usersProvider) {
@@ -39,7 +42,6 @@ Future<void> main() async {
             return usersProvider!;
           },
         ),
-        ChangeNotifierProvider(create: (_) => PostsProvider()),
         ChangeNotifierProvider(create: (_) => TransactionsProvider()),
       ],
       child: const FoodSharing(),
@@ -68,7 +70,7 @@ class FoodSharing extends StatelessWidget {
         "/app_frame": (context) => const AppFrame(),
         "/pantry_page": (context) => const PantryPage(), 
         "/add_post": (context) => const AddPostPage(),
-        
+
         "/search": (context) => const SearchPage(),
         "/edit-profile": (context) => const EditUserPage(),
       },
