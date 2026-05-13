@@ -6,7 +6,6 @@ import 'package:food_sharing/component/profile.dart';
 import 'package:food_sharing/component/sections.dart';
 import 'package:food_sharing/utils.dart';
 import 'package:food_sharing/provider/users_provider.dart';
-import 'package:food_sharing/screen/auth/welcome.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
