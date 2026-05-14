@@ -10,7 +10,8 @@ class Post {
   DateTime expiration;
   String? foodPicture;
   String? reservedForId;
-  List<String> requesterIds;
+  List<String>? requesterIds;
+  Map<String, String>? requesterAppeals;
 
   Post({
     this.id,
@@ -22,7 +23,8 @@ class Post {
     required this.expiration,
     this.foodPicture,
     this.reservedForId,
-    this.requesterIds = const [],
+    this.requesterIds,
+    this.requesterAppeals
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -42,10 +44,13 @@ class Post {
           [],
 
       requesterIds: (json['requesterIds'] as List?)
-              ?.where((e) => e != null)
-              .map((e) => e.toString())
+              ?.map((e) => e.toString())
               .toList() ??
           [],
+
+    requesterAppeals: json['requesterAppeals'] != null 
+        ? Map<String, String>.from(json['requesterAppeals']) 
+        : {},
 
     expiration: json['expiration'] is String
         ? DateTime.parse(json['expiration'])
@@ -70,6 +75,7 @@ class Post {
       'foodPicture': foodPicture,
       'reservedForId': reservedForId,
       'requesterIds': requesterIds,
+      'requesterAppelas': requesterAppeals
     };
   }
 }

@@ -29,8 +29,8 @@ class PostsProvider with ChangeNotifier {
     return firebaseService.addPost(post.toJson(), uid);
   }
 
-  Future<void> editPost(String id, Map<String, dynamic> post) {
-    return firebaseService.editPost(id, post);
+  Future<void> editPost(String id, Map<String, dynamic> updates) {
+    return firebaseService.editPost(id, updates);
   }
 
   Future<void> deletePost(String id) {

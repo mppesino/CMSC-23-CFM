@@ -152,46 +152,71 @@ Widget _buildGiverView(BuildContext context, Post post) {
   final requesterIds = post.requesterIds ?? [];
 
   if (requesterIds.isEmpty) {
-    return const Center(child:Text("No requests yet"));
+    return const Center(child: Text("No requests yet"));
   }
 
-  return ListView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: requesterIds.length,
-    itemBuilder: (context, index) {
-      final requesterId = requesterIds[index];
-
-      return FutureBuilder(
-        future: context.read<UsersProvider>().getUserById(requesterId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const ListTile(title: Text("Loading..."));
-          }
-
-          final user = snapshot.data!;
-
-          return Card(
-            child: ListTile(
-              title: Text(user.userName),
-              subtitle: const Text("Requested this item"),
-              trailing: ElevatedButton(
-                child: const Text("Accept"),
-                onPressed: () async {
-                  await context.read<PostsProvider>().editPost(
-                    post.id!,
-                    {
-                      'reservedForId': requesterId,
-                      'status': PostStatus.reserved.name,
-                    },
-                  );
-                },
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "Requests",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            // Optional: Show the count
+            Text(
+              "${requesterIds.length}",
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+
+      SizedBox(height: 10,),
+
+      // --- THE LIST ---
+      ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: requesterIds.length,
+        itemBuilder: (context, index) {
+          final requesterId = requesterIds[index];
+
+          return FutureBuilder(
+            future: context.read<UsersProvider>().getUserById(requesterId),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const ListTile(title: Text("Loading..."));
+              }
+
+              final user = snapshot.data!;
+
+              return Card(
+                color: BrandColors.white,
+                child: ListTile(
+                  leading: SizedBox(
+                    width: 40, 
+                    height: 40, 
+                    child: ProfilePicture(user: user),
+                  ),
+                  title: Text("@${user.userName}"),
+                  subtitle: Text(
+                    (post.requesterAppeals?[requesterId]?.trim().isNotEmpty ?? false)
+                        ? post.requesterAppeals![requesterId]!
+                        : "Requested this item",
+                  ),
+                  trailing: PrimaryButton(icon: Icons.check, onPressed: () {print("Request accepted!");}, style: "green", size: Size(50,50))
+                ),
+              );
+            },
           );
         },
-      );
-    },
+      ),
+    ],
   );
 }
 
@@ -274,6 +299,7 @@ Future<void> _handleRequest(
         post.id!,
         {
         'requesterIds': FieldValue.arrayUnion([currentUid]),
+        'requesterAppeals.$currentUid': _commentController.text,
         }
       );
 

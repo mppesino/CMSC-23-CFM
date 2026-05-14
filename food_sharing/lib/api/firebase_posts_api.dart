@@ -38,16 +38,9 @@ class FirebasePostsApi {
     }
   }
 
-  Future<String> editPost(String id, Map<String, dynamic> post) async {
+  Future<String> editPost(String id,Map<String, dynamic> updates) async {
     try {
-      await db.collection('posts').doc(id).update({
-        'title': post['title'], 
-        'description': post['description'], 
-        'dietary': post['dietary'], 
-        'category': post['category'], 
-        'expiration': post['expiration'],
-        'imageUrl': post['imageUrl'] 
-      });
+      await db.collection('posts').doc(id).update(updates);
       return "Successfully edited post!";
     } on FirebaseException catch (e) {
       return "Error on ${e.code}: ${e.message}";
