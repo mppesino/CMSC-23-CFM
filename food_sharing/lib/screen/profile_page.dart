@@ -49,17 +49,17 @@ class ProfilePageState extends State<ProfilePage> {
           const Divider(height: 1, thickness: 1),
 
         if (_selectedTab == 0)
-          PostFeed(
+          Padding(padding: EdgeInsets.all(16),child:PostFeed(
             stream: postsProvider.getPostsByUser(widget.user.userId ?? ""),
             type: FeedType.profile,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(), 
-          )
+          ))
         else
-          RequestFeed(
+          Padding(padding: EdgeInsets.all(16),child:RequestFeed(
             stream: postsProvider.getPostsByTransaction(widget.user.userId ?? ""),
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(), )
+            physics: const NeverScrollableScrollPhysics(), ))
         ],
       )),
       )
