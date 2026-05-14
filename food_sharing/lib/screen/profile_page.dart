@@ -58,6 +58,7 @@ class ProfilePageState extends State<ProfilePage> {
         else
           Padding(padding: EdgeInsets.all(16),child:RequestFeed(
             stream: postsProvider.getPostsByTransaction(widget.user.userId ?? ""),
+            user: widget.user,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(), ))
         ],

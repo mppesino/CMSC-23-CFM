@@ -245,11 +245,13 @@ class RequestFeed extends StatelessWidget {
   final Stream<List<QueryDocumentSnapshot>> stream;
   final Widget? header;
   final bool shrinkWrap;
+  final User user;
   final ScrollPhysics? physics;
 
   const RequestFeed({
     super.key,
     required this.stream,
+    required this.user,
     this.header,
     this.shrinkWrap = false,
     this.physics,
@@ -305,9 +307,7 @@ class RequestFeed extends StatelessWidget {
                   ? usersProvider.getUserById(post.userId!)
                   : Future.value(null),
               builder: (context, userSnapshot) {
-                // Use the data retrieved from the FutureBuilder snapshot
                 final user = userSnapshot.data;
-
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -376,7 +376,7 @@ class RequestFeed extends StatelessWidget {
                                 // --- DYNAMIC STATUS TAGS ---
                               ],
                             ),
-                            _buildRequestStatusTag(data, usersProvider.currentUser?.userId ?? "", context),]),
+                            _buildRequestStatusTag(data, this.user.userId ?? "", context),]),
                           ),
                         ],
                       ),
