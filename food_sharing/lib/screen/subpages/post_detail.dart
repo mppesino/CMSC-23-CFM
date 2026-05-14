@@ -216,7 +216,9 @@ class PostDetailPage extends StatelessWidget {
 
                 post.userId == usersProvider.currentUser?.userId ?
                 _buildGiverView(context, post)
-                :_buildRequesterView(context, post, usersProvider.currentUser?.userId ?? "")
+                :_buildRequesterView(context, post, usersProvider.currentUser?.userId ?? ""),
+                
+                SizedBox(height: 64,),
 
                 ],
               ),
@@ -318,7 +320,10 @@ Widget _buildGiverView(BuildContext context, Post post) {
       SizedBox(height: 10,),
       PostCardHeader(userId: post.reservedForId),
       SizedBox(height: 25,),
-      Center(child: PrimaryButton(text:"Generate QR", onPressed: () {}, style:"yellow")),],)
+      Center(child: PrimaryButton(text:"Generate QR", onPressed: () {}, style:"yellow")),
+
+      
+      ],),
     );
 }
 
@@ -367,6 +372,7 @@ Widget _buildRequesterView(BuildContext context, Post post, String currentUid) {
               onPressed: () {}, 
               style: "green",
             ),
+
           ],
         )
       else
