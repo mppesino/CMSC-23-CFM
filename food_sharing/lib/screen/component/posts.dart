@@ -346,7 +346,7 @@ class RequestFeed extends StatelessWidget {
                           const SizedBox(width: 16),
                           Expanded(
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
 
                                 Expanded(
