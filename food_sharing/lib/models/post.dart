@@ -15,7 +15,7 @@ class Post {
   double postLat;
   double postLng;
   String pickupAddress;
-  DateTime? pickupDateTime;
+  DateTime pickupDateTime;
 
   Post({
     this.id,
@@ -28,7 +28,7 @@ class Post {
     required this.postLat,
     required this.postLng,
     required this.pickupAddress,
-    this.pickupDateTime,
+    required this.pickupDateTime,
     this.foodPicture,
     this.reservedForId,
     this.requesterIds,
@@ -96,7 +96,7 @@ class Post {
       'postLat': postLat,
       'postLng': postLng,
       'pickupAddress': pickupAddress,
-      'pickupDateTime': pickupDateTime?.toIso8601String(),
+      'pickupDateTime': pickupDateTime.toIso8601String(),
     };
   }
 }

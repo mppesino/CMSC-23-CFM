@@ -128,7 +128,26 @@ class PostDetailPage extends StatelessWidget {
                   const SizedBox(height: 25),
                   ],
 
-                
+                  
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.event,
+                        color: BrandColors.gray,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        "Expires: ${DateFormat('MMMM dd, yyyy').format(post.expiration)}",
+                        style: const TextStyle(
+                          color: BrandColors.gray,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 25),
 
                   const Text(
                     "Status",
@@ -142,33 +161,13 @@ class PostDetailPage extends StatelessWidget {
                                 : post.status == PostStatus.reserved ? "Reserved"
                                 : post.status == PostStatus.completed ? "Completed" : "Error", tagColor),
                   const SizedBox(height: 25),
-
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.timer_outlined,
-                        color: Colors.redAccent,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        "Expires: ${DateFormat('MMMM dd, yyyy').format(post.expiration)}",
-                        style: const TextStyle(
-                          color: Colors.redAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                const SizedBox(height: 25),
+                
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Pickup Location",
+                      "Pickup Details",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     const SizedBox(height: 4),
@@ -189,12 +188,14 @@ class PostDetailPage extends StatelessWidget {
                             children:[
                               Text(
                                 post.pickupAddress,
-                                style: const TextStyle(fontSize: 18, color: Colors.black87),
+                                style: const TextStyle(fontSize: 18, color: Colors.black87, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                "${post.postLat}, ${post.postLng}",
-                                style: const TextStyle(fontSize: 16, color: BrandColors.gray),
-                              ),
+                                "${DateFormat('MMMM dd, yyyy  h:mm a').format(post.pickupDateTime)}",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ))
                             ]
                           )),
                   
@@ -316,7 +317,9 @@ Widget _buildGiverView(BuildContext context, Post post) {
           fontWeight: FontWeight.bold,
         ),
       ),
+      SizedBox(height: 10,),
       PostCardHeader(userId: post.reservedForId),
+      SizedBox(height: 25,),
       Center(child: PrimaryButton(text:"Generate QR", onPressed: () {}, style:"yellow")),],)
     );
 }

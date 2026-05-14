@@ -7,7 +7,7 @@ import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/screen/component/buttons.dart';
 import 'package:food_sharing/screen/subpages/pick_location_page.dart';
-
+import 'package:intl/intl.dart';
 import 'package:food_sharing/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +29,7 @@ class _AddPostPageState extends State<AddPostPage> {
   final _titleController = TextEditingController();
   final _captionController = TextEditingController();
   DateTime? _expiration;
+  DateTime? _pickupDateTime;
   final List<String> _selectedTags = [];
   bool _isLoading = false;
   String? foodPicture;
@@ -89,6 +90,50 @@ class _AddPostPageState extends State<AddPostPage> {
     }
   }
 
+  Future<void> _pickPickupDateTime() async {
+    final now = DateTime.now();
+
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: now.add(const Duration(days: 1)),
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 14)),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(primary: BrandColors.green),
+        ),
+        child: child!,
+      ),
+    );
+
+    if (pickedDate == null) return;
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(now),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(primary: BrandColors.green),
+        ),
+        child: child!,
+      ),
+    );
+
+    if (pickedTime == null) return;
+
+    final combined = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    setState(() {
+      _pickupDateTime = combined;
+    });
+  }
+
 
   // --------------- POST ---------------
   Future<void> _submit() async {
@@ -142,7 +187,8 @@ class _AddPostPageState extends State<AddPostPage> {
       foodPicture: foodPicture, 
       postLat: postLat!,
       postLng:  postLng!,
-      pickupAddress: pickupAddress!
+      pickupAddress: pickupAddress!,
+      pickupDateTime: _pickupDateTime!
     );
 
     // save post to firestore
@@ -335,6 +381,33 @@ class _AddPostPageState extends State<AddPostPage> {
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 20),
+
+                  GestureDetector(
+                    onTap: _pickPickupDateTime,
+
+                    child: Row(
+                      children: [
+                        const Icon(Icons.timer_outlined, color: BrandColors.green),
+
+                        const SizedBox(width: 10),
+
+                        Text(
+                          _pickupDateTime != null
+                              ? 'Pickup By: ${DateFormat('MM/dd/yyyy  h:mm a').format(_pickupDateTime!)}'
+                              : 'Set Pickup Time',
+
+                          style: TextStyle(
+                            color: _pickupDateTime == null
+                                ? Colors.grey
+                                : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
 
                   const SizedBox(height: 20),
 
