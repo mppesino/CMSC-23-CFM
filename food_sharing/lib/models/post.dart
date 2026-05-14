@@ -12,6 +12,10 @@ class Post {
   String? reservedForId;
   List<String>? requesterIds;
   Map<String, String>? requesterAppeals;
+  double postLat;
+  double postLng;
+  String pickupAddress;
+  DateTime? pickupDateTime;
 
   Post({
     this.id,
@@ -21,6 +25,10 @@ class Post {
     required this.status,
     required this.tags,
     required this.expiration,
+    required this.postLat,
+    required this.postLng,
+    required this.pickupAddress,
+    this.pickupDateTime,
     this.foodPicture,
     this.reservedForId,
     this.requesterIds,
@@ -37,6 +45,15 @@ class Post {
         (e) => e.name == json['status'],
         orElse: () => PostStatus.available,
       ),
+
+      postLat: (json['postLat'] ?? 0).toDouble(),
+      postLng: (json['postLng'] ?? 0).toDouble(),
+      pickupAddress: json['pickupAddress'] as String? ?? '',
+      pickupDateTime: json['pickupDateTime'] is String
+          ? DateTime.parse(json['pickupDateTime'])
+          : json['pickupDateTime'] != null
+              ? (json['pickupDateTime'] as dynamic).toDate()
+              : DateTime.now(),
 
       tags: (json['tags'] as List?)
               ?.map((e) => e.toString())
@@ -75,7 +92,11 @@ class Post {
       'foodPicture': foodPicture,
       'reservedForId': reservedForId,
       'requesterIds': requesterIds,
-      'requesterAppeals': requesterAppeals
+      'requesterAppeals': requesterAppeals,
+      'postLat': postLat,
+      'postLng': postLng,
+      'pickupAddress': pickupAddress,
+      'pickupDateTime': pickupDateTime?.toIso8601String(),
     };
   }
 }

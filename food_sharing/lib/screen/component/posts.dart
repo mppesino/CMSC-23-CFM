@@ -192,8 +192,7 @@ class PostFeed extends StatelessWidget {
   String emptyText;
 
     if(type==FeedType.profile){
-       emptyText = "User has no posts yet.";
-
+       emptyText = "Hmm.. it's empty here.";
     }else if (type==FeedType.pantry){
        emptyText = "No items in the pantry yet.";
     }else {
@@ -214,15 +213,13 @@ class PostFeed extends StatelessWidget {
             children: [
               if (header != null) header!,
               const SizedBox(height: 20),
-              Expanded(
-                child: Center(
+              Center(
                   child: Text(
                     emptyText,
                     style: TextStyleTheme.body,
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ),
             ],
           );
         }

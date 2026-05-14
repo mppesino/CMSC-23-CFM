@@ -12,6 +12,7 @@ import 'package:food_sharing/screen/component/buttons.dart';
 import 'package:food_sharing/screen/component/posts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PostDetailPage extends StatelessWidget {
   final Post post;
@@ -62,7 +63,7 @@ class PostDetailPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 'Delete Post',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black, fontSize: 18),
               ),
             ),
           ),
@@ -163,6 +164,55 @@ class PostDetailPage extends StatelessWidget {
 
                 const SizedBox(height: 25),
 
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Pickup Location",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    const SizedBox(height: 4),
+                    InkWell(
+                      onTap: () async {
+                      final url = Uri.parse(
+                        "https://www.google.com/maps/search/?api=1&query=${post.postLat},${post.postLng}",
+                      );
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center, 
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                            children:[
+                              Text(
+                                post.pickupAddress,
+                                style: const TextStyle(fontSize: 18, color: Colors.black87),
+                              ),
+                              Text(
+                                "${post.postLat}, ${post.postLng}",
+                                style: const TextStyle(fontSize: 16, color: BrandColors.gray),
+                              ),
+                            ]
+                          )),
+                  
+                          const Padding(
+                            padding: EdgeInsets.all(12.0), 
+                            child: Icon(
+                              Icons.location_on,
+                              color: Colors.black, 
+                              size: 26,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25),
+
                 post.userId == usersProvider.currentUser?.userId ?
                 _buildGiverView(context, post)
                 :_buildRequesterView(context, post, usersProvider.currentUser?.userId ?? "")
@@ -183,8 +233,6 @@ Widget _buildGiverView(BuildContext context, Post post) {
     // This removes the default borders that ExpansionTile adds when expanded
     data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
     child: 
-    
-    
     post.reservedForId == null ?
     ExpansionTile(
       // Keep padding consistent with your other headers
@@ -203,7 +251,7 @@ Widget _buildGiverView(BuildContext context, Post post) {
         if (requesterIds.isEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
-            child: Center(child: Text("No requests yet")),
+            child: Center(child: Text("No requests yet", style: TextStyle(fontSize: 18),)),
           )
         else
           ListView.builder(
@@ -261,7 +309,14 @@ Widget _buildGiverView(BuildContext context, Post post) {
     )
     :
     Column(children: [
-      
+      const Text(
+        "Reserved For",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      PostCardHeader(userId: post.reservedForId),
       Center(child: PrimaryButton(text:"Generate QR", onPressed: () {}, style:"yellow")),],)
     );
 }
@@ -269,10 +324,12 @@ Widget _buildGiverView(BuildContext context, Post post) {
   Widget _buildRequesterView(BuildContext context, Post post, String currentUid){
 
     bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
-  
+    final bool disabled =
+      post.status == PostStatus.reserved || alreadyRequested;
+
     return(
       Column(children: [
-       !alreadyRequested ? TextField(
+       (!disabled)? TextField(
           controller: _commentController,
           maxLines: 1,
           cursorColor: BrandColors.darkGreen,
@@ -280,7 +337,7 @@ Widget _buildGiverView(BuildContext context, Post post) {
             hintText: 'Why do you need this item?',
             filled: true,
             fillColor: Colors.grey.shade100,
-            label: Text("Appeal"),
+            label: Text("Request Message"),
             labelStyle: TextStyle(color: BrandColors.darkGreen),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -301,8 +358,14 @@ Widget _buildRequestButton(BuildContext context, Post post, String currentUid,  
       post.status == PostStatus.reserved || alreadyRequested;
 
   return PrimaryButton(
-    text:  !disabled? "Request Item" : alreadyRequested? "Requested" : "Reserved",
-    onPressed: disabled ? null : () {
+    text: post.reservedForId == currentUid
+    ? "Reserved by You"
+    : alreadyRequested
+        ? "Requested"
+        : disabled
+            ? "Reserved"
+            : "Request Item",
+      onPressed: disabled ? null : () {
       _handleRequest(context, currentUid, post);
     },
     style: disabled ? "gray" : "green",

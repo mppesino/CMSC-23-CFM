@@ -6,9 +6,12 @@ import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:food_sharing/screen/component/buttons.dart';
+import 'package:food_sharing/screen/subpages/pick_location_page.dart';
+
 import 'package:food_sharing/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
 // ---------------  ---------------
 
 // --------------- ADD POST PAGE ---------------
@@ -29,6 +32,9 @@ class _AddPostPageState extends State<AddPostPage> {
   final List<String> _selectedTags = [];
   bool _isLoading = false;
   String? foodPicture;
+  double? postLat;
+  double? postLng;
+  String? pickupAddress;
 
   @override
   void dispose() {
@@ -88,6 +94,15 @@ class _AddPostPageState extends State<AddPostPage> {
   Future<void> _submit() async {
 
 
+    if (postLat == null || postLng == null || pickupAddress == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a pickup location.'),
+        ),
+      );
+      return;
+    }
+
     // VALIDATION 2 ---------------
     // add a desc for the item ---------------
     if (_titleController.text.trim().isEmpty) {
@@ -120,11 +135,14 @@ class _AddPostPageState extends State<AddPostPage> {
     final post = Post(
       userId: uid, // poster
       title: _titleController.text.trim(), 
-      description: _captionController.text.trim(), // DESCRIPTION
-      status: PostStatus.available, // default status
-      tags: _selectedTags, // dietary tags
-      expiration: _expiration!, // expiration date
-      foodPicture: foodPicture, // image
+      description: _captionController.text.trim(), 
+      status: PostStatus.available, 
+      tags: _selectedTags,
+      expiration: _expiration!, 
+      foodPicture: foodPicture, 
+      postLat: postLat!,
+      postLng:  postLng!,
+      pickupAddress: pickupAddress!
     );
 
     // save post to firestore
@@ -255,12 +273,13 @@ class _AddPostPageState extends State<AddPostPage> {
                   TextField(
                     controller: _titleController,
                     maxLines: 1,
-                    
+                    cursorColor: BrandColors.darkGreen,
                     decoration: InputDecoration(
                       hintText: 'e.g. 3 extra Eggs...',
                       filled: true,
                       fillColor: Colors.grey.shade100,
                       label: Text("Title"),
+                      labelStyle: TextStyle(color: BrandColors.darkGreen),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -275,12 +294,14 @@ class _AddPostPageState extends State<AddPostPage> {
                   TextField(
                     controller: _captionController,
                     maxLines: 3,
-
+                    cursorColor: BrandColors.darkGreen,
                     decoration: InputDecoration(
                       hintText: 'Describe the item',
                       filled: true,
                       fillColor: Colors.grey.shade100,
                       label: Text("Caption"),
+                      labelStyle: TextStyle(color: BrandColors.darkGreen),
+
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -359,7 +380,51 @@ class _AddPostPageState extends State<AddPostPage> {
                     }).toList(),
                   ),
 
+                  const SizedBox(height: 20),
+
+                  Text('Pickup Location', style: TextStyleTheme.subtitle_bold),
+
+                  const SizedBox(height: 10),
+
+                  (pickupAddress == null || pickupAddress!.trim().isEmpty)
+                      ? Center(
+                          child: Text(
+                            "Select a pickup location",
+                            style: TextStyleTheme.body,
+                          ),
+                        )
+                      : Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                        Text(pickupAddress!, style: TextStyle(fontSize: 18),),
+                        Text("$postLat, $postLng", style: TextStyle(fontSize: 16, color: BrandColors.gray),),
+                      ]),
+
                   const SizedBox(height: 30),
+
+                  Center(child:
+                  PrimaryButton(
+                    icon: Icons.push_pin,
+                    text: "Pickup Location",
+                    style: "gray",
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PickLocationPage(),
+                        ),
+                      );
+
+                      if (result != null) {
+                        setState(() {
+                          postLat = result['lat'];
+                          postLng = result['lng'];
+                          pickupAddress = result['address'];
+                        });
+                      }
+                    },
+                  )),
+
+                  const SizedBox(height: 30),
+
 
                   // POST BUTTON ---------------
                   Center(
@@ -369,7 +434,7 @@ class _AddPostPageState extends State<AddPostPage> {
                           )
                         : PrimaryButton(
                             onPressed: _submit,
-                            text: 'POST TO PANTRY',
+                            text: 'Post to Pantry',
                             style: 'yellow',
                             size: const Size(200, 50),
                           ),
