@@ -366,7 +366,7 @@ class RequestFeed extends StatelessWidget {
                                 
                                 // --- ITEM DESCRIPTION ---
                                 Text(
-                                  post.description ?? "No description provided.",
+                                  post.description,
                                   style: TextStyleTheme.body.copyWith(color: Colors.grey.shade700, fontSize: 13),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
