@@ -75,7 +75,7 @@ class Post {
       'foodPicture': foodPicture,
       'reservedForId': reservedForId,
       'requesterIds': requesterIds,
-      'requesterAppelas': requesterAppeals
+      'requesterAppeals': requesterAppeals
     };
   }
 }

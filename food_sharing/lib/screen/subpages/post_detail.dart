@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/models/post.dart';
+import 'package:food_sharing/models/user.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/screen/component/profile.dart';
@@ -39,8 +40,35 @@ class PostDetailPage extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 0,
         title: Text(post.title, style: TextStyleTheme.subtitle_bold,),
-      ),
-
+        actions: [
+        if (post.userId == usersProvider.currentUser?.userId)
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_horiz, color: Colors.black),
+          color: Colors.white, 
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          
+          onSelected: (value) {
+            if (value == 'delete') {
+              Navigator.pop(context);
+              postsProvider.deletePost(post.id ?? "");
+            }
+          },
+        itemBuilder: (BuildContext context) => [
+          const PopupMenuItem<String>(
+            value: 'delete',
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                'Delete Post',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        ],
+        )      
+        ]),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,73 +179,91 @@ class PostDetailPage extends StatelessWidget {
 Widget _buildGiverView(BuildContext context, Post post) {
   final requesterIds = post.requesterIds ?? [];
 
-  if (requesterIds.isEmpty) {
-    return const Center(child: Text("No requests yet"));
-  }
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Requests",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            // Optional: Show the count
-            Text(
-              "${requesterIds.length}",
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
+  return Theme(
+    // This removes the default borders that ExpansionTile adds when expanded
+    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+    child: 
+    
+    
+    post.reservedForId == null ?
+    ExpansionTile(
+      // Keep padding consistent with your other headers
+      tilePadding: EdgeInsets.zero,
+      title: Text(
+        "Requests (${requesterIds.length})",
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
         ),
+      ),
+      initiallyExpanded: requesterIds.isNotEmpty, 
+      iconColor: BrandColors.black,
+      children: [
+        if (requesterIds.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Center(child: Text("No requests yet")),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: requesterIds.length,
+            itemBuilder: (context, index) {
+              final requesterId = requesterIds[index];
 
-      SizedBox(height: 10,),
+              return FutureBuilder(
+                future: context.read<UsersProvider>().getUserById(requesterId),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const ListTile(title: Text("Loading..."));
+                  }
 
-      // --- THE LIST ---
-      ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: requesterIds.length,
-        itemBuilder: (context, index) {
-          final requesterId = requesterIds[index];
+                  final user = snapshot.data!;
 
-          return FutureBuilder(
-            future: context.read<UsersProvider>().getUserById(requesterId),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const ListTile(title: Text("Loading..."));
-              }
-
-              final user = snapshot.data!;
-
-              return Card(
-                color: BrandColors.white,
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 40, 
-                    height: 40, 
-                    child: ProfilePicture(user: user),
-                  ),
-                  title: Text("@${user.userName}"),
-                  subtitle: Text(
-                    (post.requesterAppeals?[requesterId]?.trim().isNotEmpty ?? false)
-                        ? post.requesterAppeals![requesterId]!
-                        : "Requested this item",
-                  ),
-                  trailing: PrimaryButton(icon: Icons.check, onPressed: () {print("Request accepted!");}, style: "green", size: Size(50,50))
-                ),
+                  return Card(
+                    elevation: 0, 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    color: BrandColors.white,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      leading: CircleAvatar(
+                        radius: 20,
+                        child: ProfilePicture(user: user),
+                      ),
+                      title: Text(
+                        "@${user.userName}",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        (post.requesterAppeals?[requesterId]?.trim().isNotEmpty ?? false)
+                            ? post.requesterAppeals![requesterId]!
+                            : "Requested this item",
+                      ),
+                      trailing: PrimaryButton(
+                        icon: Icons.check,
+                        onPressed: () {_handleAccept(context, user, post);},
+                        style: "green",
+                        size: const Size(45, 45),
+                      ),
+                    ),
+                  );
+                },
               );
             },
-          );
-        },
-      ),
-    ],
-  );
+          ),
+      ],
+    )
+    :
+    Column(children: [
+      
+      Center(child: PrimaryButton(text:"Generate QR", onPressed: () {}, style:"yellow")),],)
+    );
 }
 
   Widget _buildRequesterView(BuildContext context, Post post, String currentUid){
@@ -277,6 +323,10 @@ Future<void> _handleRequest(
         content: Text('Send a request for "${post.title}"?'),
         actions: [
           TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: BrandColors.green)),
+          ),
+          TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text(
               'Confirm',
@@ -286,10 +336,7 @@ Future<void> _handleRequest(
               ),
             ),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: BrandColors.green)),
-          ),
+
         ],
       ),
     );
@@ -317,6 +364,62 @@ Future<void> _handleRequest(
     }
   }
 }
+
+Future<void> _handleAccept(
+    BuildContext context,
+    User user,
+    Post post
+  ) async {
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Request Item'),
+        content: Text('Reserve item for ${user.userName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: BrandColors.green)),
+          ),
+                    TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Confirm',
+              style: TextStyle(
+                color: BrandColors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await context.read<PostsProvider>().editPost(
+        post.id!,
+        {
+        'requesterIds': [],
+        'requesterAppeals': {},
+        'reservedForId': user.userId,
+        'status': PostStatus.reserved.name
+        }
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Reserved! Status has been updated for all users.',
+            ),
+            backgroundColor: BrandColors.green,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    }
+}
+
 
 Widget _buildTagChip(String label, Color color) {
   return Container(
