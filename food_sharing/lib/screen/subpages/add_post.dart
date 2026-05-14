@@ -95,7 +95,7 @@ class _AddPostPageState extends State<AddPostPage> {
 
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: now.add(const Duration(days: 1)),
+      initialDate: now.add(const Duration(days: 2)),
       firstDate: now,
       lastDate: now.add(const Duration(days: 14)),
       builder: (context, child) => Theme(
@@ -162,6 +162,13 @@ class _AddPostPageState extends State<AddPostPage> {
     if (_expiration == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please set an expiration date.')),
+      );
+      return;
+    }
+
+    if (_pickupDateTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please set a pickup date and time.')),
       );
       return;
     }
