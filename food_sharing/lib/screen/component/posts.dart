@@ -30,10 +30,9 @@ class PostCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-                    if (type == FeedType.pantry) ...[
-                PostCardHeader(userId: post.userId),
-                const SizedBox(height: 8),
-              ],
+              PostCardHeader(userId: post.userId),
+              const SizedBox(height: 8),
+  
 
               GestureDetector(
               onTap: () {
