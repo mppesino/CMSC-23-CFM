@@ -345,40 +345,62 @@ class RequestFeed extends StatelessWidget {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children:[Column(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  post.title,
-                                  style: TextStyleTheme.subtitle_bold,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Posted by: @${user?.userName ?? 'loading...'}",
-                                  style: TextStyleTheme.body.copyWith(color: Colors.grey.shade600, fontSize: 13),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 6),
-                                
-                                // --- ITEM DESCRIPTION ---
-                                Text(
-                                  post.description,
-                                  style: TextStyleTheme.body.copyWith(color: Colors.grey.shade700, fontSize: 13),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 8),
 
-                                // --- DYNAMIC STATUS TAGS ---
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        post.title,
+                                        style: TextStyleTheme.subtitle_bold,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+
+                                      const SizedBox(height: 2),
+
+                                      Text(
+                                        "Posted by: @${user?.userName ?? 'loading...'}",
+                                        style: TextStyleTheme.body.copyWith(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 13,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+
+                                      const SizedBox(height: 6),
+
+                                      Text(
+                                        post.description,
+                                        style: TextStyleTheme.body.copyWith(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 13,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(width: 8),
+
+                                if (this.user.userId == usersProvider.currentUser?.userId)
+                                  Flexible(
+                                    child: _buildRequestStatusTag(
+                                      data,
+                                      this.user.userId ?? "",
+                                      context,
+                                    ),
+                                  ),
                               ],
                             ),
-                            this.user.userId == usersProvider.currentUser?.userId ?
-                            _buildRequestStatusTag(data, this.user.userId ?? "", context): const SizedBox.shrink(),]),
                           ),
-                        ],
+            ],
                       ),
                     ),
                   ),
