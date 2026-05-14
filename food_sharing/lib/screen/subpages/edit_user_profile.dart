@@ -274,7 +274,7 @@ class EditUserPageState extends State<EditUserPage> {
               color: Colors.black.withOpacity(0.4),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: BrandColors.mediumGreen,
+                  color: BrandColors.green,
                 ),
               ),
             ),

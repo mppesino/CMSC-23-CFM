@@ -362,7 +362,7 @@ Widget _buildRequestButton(BuildContext context, Post post, String currentUid,  
 
   return PrimaryButton(
     text: post.reservedForId == currentUid
-    ? "Reserved by You"
+    ? "Reserved For You"
     : alreadyRequested
         ? "Requested"
         : disabled

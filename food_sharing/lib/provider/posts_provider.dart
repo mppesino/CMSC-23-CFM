@@ -14,6 +14,10 @@ class PostsProvider with ChangeNotifier {
     return firebaseService.getPostsByUser(uid);
   }
 
+  Stream<List<QueryDocumentSnapshot<Object?>>> getPostsByTransaction(String uid) {
+    return firebaseService.getPostsByTransaction(uid);
+  }
+
   Future<Post?> getPostById(String id) async {
     final doc = await firebaseService.getPost(id);
 

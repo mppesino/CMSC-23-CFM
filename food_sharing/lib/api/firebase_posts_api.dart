@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_sharing/models/post.dart';
+import 'package:rxdart/rxdart.dart';
 
 class FirebasePostsApi {
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -15,6 +16,35 @@ class FirebasePostsApi {
   Future<DocumentSnapshot> getPost(String id) async {
     return await db.collection('posts').doc(id).get();
   }
+
+Stream<List<QueryDocumentSnapshot>> getPostsByTransaction(String uid) {
+  final requested = db
+      .collection('posts')
+      .where('requesterIds', arrayContains: uid)
+      .snapshots();
+
+  final reserved = db
+      .collection('posts')
+      .where('reservedForId', isEqualTo: uid)
+      .snapshots();
+
+  return Rx.combineLatest2(
+    requested,
+    reserved,
+    (QuerySnapshot a, QuerySnapshot b) {
+      final map = <String, QueryDocumentSnapshot>{};
+
+      for (var doc in a.docs) {
+        map[doc.id] = doc;
+      }
+      for (var doc in b.docs) {
+        map[doc.id] = doc;
+      }
+
+      return map.values.toList();
+    },
+  );
+}
 
   Future<String> addPost(Map<String, dynamic> post, String? uid) async {
     try {

@@ -146,7 +146,7 @@ class LoginPageState extends State<LoginPage> {
             Container(
               color: Colors.black.withOpacity(0.4),
               child: const Center(
-                child: CircularProgressIndicator(color: BrandColors.mediumGreen,),
+                child: CircularProgressIndicator(color: BrandColors.green,),
               ),
             ),
         ],

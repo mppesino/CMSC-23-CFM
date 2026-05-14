@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:food_sharing/theme/app_theme.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
@@ -43,3 +46,4 @@ Future<Uint8List> compressImage(XFile file) async {
     img.encodeJpg(resized, quality: 80),
   );
 }
+

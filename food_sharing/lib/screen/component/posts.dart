@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_sharing/screen/component/profile.dart';
 import 'package:food_sharing/screen/profile_page.dart';
@@ -106,13 +107,15 @@ class PostCard extends StatelessWidget {
     );
   }
 
+
+}
+
   Widget _imagePlaceholder() => Container(
         color: const Color(0xFFEEEEEE),
         child: const Center(
           child: Icon(Icons.image_outlined, color: Colors.grey, size: 30),
         ),
       );
-}
 
 class PostCardHeader extends StatelessWidget {
   final String? userId;
@@ -189,22 +192,13 @@ class PostFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  String emptyText;
-
-    if(type==FeedType.profile){
-       emptyText = "Hmm.. it's empty here.";
-    }else if (type==FeedType.pantry){
-       emptyText = "No items in the pantry yet.";
-    }else {
-      emptyText = "No items in the pantry yet.";
-    }
-
+  String  emptyText = "Hmm.. it's empty here.";
     return StreamBuilder(
       stream: stream,
       
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: BrandColors.green));
         }
 
         final posts = snapshot.data!.docs;
@@ -245,4 +239,197 @@ class PostFeed extends StatelessWidget {
       },
     );
   }
+}
+
+class RequestFeed extends StatelessWidget {
+  final Stream<List<QueryDocumentSnapshot>> stream;
+  final Widget? header;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
+
+  const RequestFeed({
+    super.key,
+    required this.stream,
+    this.header,
+    this.shrinkWrap = false,
+    this.physics,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const emptyText = "Hmm.. it's empty here.";
+    final usersProvider = context.read<UsersProvider>();
+
+    return StreamBuilder<List<QueryDocumentSnapshot>>(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(color: BrandColors.green),
+          );
+        }
+
+        final requests = snapshot.data!;
+
+        if (requests.isEmpty) {
+          return Column(
+            children: [
+              if (header != null) header!,
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  emptyText,
+                  style: TextStyleTheme.body,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          );
+        }
+
+        return ListView.separated(
+          shrinkWrap: shrinkWrap,
+          physics: physics,
+          itemCount: requests.length + (header != null ? 1 : 0),
+          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          itemBuilder: (context, index) {
+            if (header != null && index == 0) return header!;
+
+            final requestIndex = header != null ? index - 1 : index;
+
+            final data = requests[requestIndex].data() as Map<String, dynamic>;
+            final post = Post.fromJson(data);
+
+            return FutureBuilder<User?>(
+              future: post.userId != null
+                  ? usersProvider.getUserById(post.userId!)
+                  : Future.value(null),
+              builder: (context, userSnapshot) {
+                // Use the data retrieved from the FutureBuilder snapshot
+                final user = userSnapshot.data;
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PostDetailPage(post: post),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    color: BrandColors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Image Section
+                          SizedBox(
+                            width: 90,
+                            height: 90,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: (post.foodPicture != null && post.foodPicture!.isNotEmpty)
+                                  ? Image.memory(
+                                      base64Decode(post.foodPicture!),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                                    )
+                                  : _imagePlaceholder(),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children:[Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.title,
+                                  style: TextStyleTheme.subtitle_bold,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "Posted by: @${user?.userName ?? 'loading...'}",
+                                  style: TextStyleTheme.body.copyWith(color: Colors.grey.shade600, fontSize: 13),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 6),
+                                
+                                // --- ITEM DESCRIPTION ---
+                                Text(
+                                  post.description ?? "No description provided.",
+                                  style: TextStyleTheme.body.copyWith(color: Colors.grey.shade700, fontSize: 13),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+
+                                // --- DYNAMIC STATUS TAGS ---
+                              ],
+                            ),
+                            _buildRequestStatusTag(data, usersProvider.currentUser?.userId ?? "", context),]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }, 
+            ); 
+          },  
+        );
+      }, 
+    ); 
+  }
+
+  // Included just in case it is defined elsewhere in your file
+  Widget _imagePlaceholder() {
+    return Container(color: Colors.grey.shade300, child: const Icon(Icons.fastfood, color: Colors.white));
+  }
+
+  Widget _buildRequestStatusTag(Map<String, dynamic> data, String currentUid, BuildContext context) {
+  final bool isRequestedByMe = data['requesterIds'].contains(currentUid); 
+  final bool isReservedForMe = data['reservedForId'] == currentUid;
+
+  String tagLabel = "";
+  Color backgroundColor = Colors.transparent;
+  Color textColor = Colors.transparent;
+
+  if (isRequestedByMe) {
+    tagLabel = "Pending Request";
+    textColor = BrandColors.green;
+    backgroundColor = BrandColors.green; 
+  } else if (isReservedForMe) {
+    tagLabel = "Reserved For you";
+    textColor = BrandColors.yellow;
+    backgroundColor = BrandColors.yellow;
+  } else {
+    return const SizedBox.shrink();
+  }
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: backgroundColor.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: Text(
+      tagLabel,
+      style: TextStyleTheme.body.copyWith(
+        color: textColor,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
 }

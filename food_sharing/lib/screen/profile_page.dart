@@ -53,11 +53,13 @@ class ProfilePageState extends State<ProfilePage> {
             stream: postsProvider.getPostsByUser(widget.user.userId ?? ""),
             type: FeedType.profile,
             shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(), 
+            physics: const NeverScrollableScrollPhysics(), 
           )
         else
-          Text("Requests")
-
+          RequestFeed(
+            stream: postsProvider.getPostsByTransaction(widget.user.userId ?? ""),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(), )
         ],
       )),
       )
@@ -133,3 +135,4 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+

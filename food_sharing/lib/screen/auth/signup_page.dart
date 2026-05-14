@@ -295,7 +295,7 @@ class SignupPageState extends State<SignupPage> {
               color: Colors.black.withValues(alpha: 0.4),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: BrandColors.mediumGreen,
+                  color: BrandColors.green,
                 ),
               ),
             ),
