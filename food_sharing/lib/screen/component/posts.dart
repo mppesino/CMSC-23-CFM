@@ -376,7 +376,8 @@ class RequestFeed extends StatelessWidget {
                                 // --- DYNAMIC STATUS TAGS ---
                               ],
                             ),
-                            _buildRequestStatusTag(data, this.user.userId ?? "", context),]),
+                            this.user.userId == usersProvider.currentUser?.userId ?
+                            _buildRequestStatusTag(data, this.user.userId ?? "", context): const SizedBox.shrink(),]),
                           ),
                         ],
                       ),
