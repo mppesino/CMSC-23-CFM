@@ -231,12 +231,10 @@ Widget _buildGiverView(BuildContext context, Post post) {
   final requesterIds = post.requesterIds ?? [];
 
   return Theme(
-    // This removes the default borders that ExpansionTile adds when expanded
     data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
     child: 
     post.reservedForId == null ?
     ExpansionTile(
-      // Keep padding consistent with your other headers
       tilePadding: EdgeInsets.zero,
       title: Text(
         "Requests (${requesterIds.length})",
@@ -324,15 +322,17 @@ Widget _buildGiverView(BuildContext context, Post post) {
     );
 }
 
-  Widget _buildRequesterView(BuildContext context, Post post, String currentUid){
+Widget _buildRequesterView(BuildContext context, Post post, String currentUid) {
+  final bool isReservedForMe = post.reservedForId == currentUid;
+  final bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
+  final bool disabled = post.status == PostStatus.reserved || alreadyRequested;
 
-    bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
-    final bool disabled =
-      post.status == PostStatus.reserved || alreadyRequested;
-
-    return(
-      Column(children: [
-       (!disabled)? TextField(
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      // 1. Show TextField only if the item is available and not yet requested by user
+      if (!disabled && !isReservedForMe) ...[
+        TextField(
           controller: _commentController,
           maxLines: 1,
           cursorColor: BrandColors.darkGreen,
@@ -340,22 +340,45 @@ Widget _buildGiverView(BuildContext context, Post post) {
             hintText: 'Why do you need this item?',
             filled: true,
             fillColor: Colors.grey.shade100,
-            label: Text("Request Message"),
+            label: const Text("Request Message"),
             labelStyle: TextStyle(color: BrandColors.darkGreen),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
             ),
           ),
-        ) : const SizedBox.shrink(),
+        ),
         const SizedBox(height: 15),
-        Center(child: _buildRequestButton(context, post, currentUid, alreadyRequested))
-      ],)
-    );
-  }
+      ],
+
+      if (isReservedForMe)
+        Column(
+          children: [
+            const Text(
+              "Reserved For You!", 
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 25),
+            PrimaryButton(
+              text: "Scan QR", 
+              onPressed: () {}, 
+              style: "green",
+            ),
+          ],
+        )
+      else
+        // DEFAULT STATE: Show the Request Button
+        Center(
+          child: _buildRequestButton(context, post, currentUid, alreadyRequested),
+        ),
+    ],
+  );
+}
 
 Widget _buildRequestButton(BuildContext context, Post post, String currentUid,  bool alreadyRequested) {
-
 
   final bool disabled =
       post.status == PostStatus.reserved || alreadyRequested;

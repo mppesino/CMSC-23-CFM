@@ -424,9 +424,10 @@ class RequestFeed extends StatelessWidget {
     ),
     child: Text(
       tagLabel,
+      maxLines: 2,
       style: TextStyleTheme.body.copyWith(
         color: textColor,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: FontWeight.bold,
       ),
     ),
