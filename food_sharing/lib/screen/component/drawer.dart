@@ -25,17 +25,6 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
 
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text("Edit Profile"),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(
-                context,
-                '/edit-profile',
-              );
-            },
-          ),
 
           ListTile(
             leading: const Icon(Icons.settings),
@@ -48,6 +37,19 @@ class AppDrawer extends StatelessWidget {
               );
 
               // navigate to profile
+            },
+          ),
+
+
+          ListTile(
+            leading: const Icon(Icons.edit),
+            title: const Text("Edit Profile"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(
+                context,
+                '/edit-profile',
+              );
             },
           ),
 

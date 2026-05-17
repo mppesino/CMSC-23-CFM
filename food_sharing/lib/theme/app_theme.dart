@@ -41,6 +41,7 @@ class BrandColors {
   static const black = Colors.black;
   static const white = Colors.white;
   static const gray = Color.fromARGB(255, 196, 194, 192);
+  static const darkGray =Color.fromARGB(255, 109, 107, 105);
 
 }
 
@@ -98,6 +99,11 @@ class TextStyleTheme {
   static final body = GoogleFonts.sourGummy(
     fontSize: 18,
     color: BrandColors.black
+  );
+
+  static final body_sub = GoogleFonts.sourGummy(
+    fontSize: 16,
+    color: BrandColors.darkGray
   );
 
   static final subtitle_bold = GoogleFonts.sourGummy(
