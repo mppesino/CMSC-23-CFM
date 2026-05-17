@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:food_sharing/screen/subpages/settings.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -66,6 +67,7 @@ class FoodSharing extends StatelessWidget {
         "/app_frame": (context) => AppFrame(),
         "/pantry_page": (context) => const PantryPage(), 
         "/add_post": (context) => const AddPostPage(),
+        "/settings": (context) => const SettingsPage(),
 
         "/search": (context) => const SearchPage(),
         "/edit-profile": (context) => const EditUserPage(),
