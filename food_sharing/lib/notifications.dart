@@ -20,10 +20,8 @@ class Notifications {
   }
 
   static Future<void> schedulePickupReminder({required int id, required String postTitle, required DateTime pickupTime}) async{
-    //remind 1 hour before pickup time:
     final tz.TZDateTime scheduledDate = tz.TZDateTime.from(
-      DateTime.now().add(const Duration(seconds: 5)),
-      //pickupTime.subtract(const Duration(hours:1)), 
+      pickupTime.subtract(const Duration(hours:1)), 
       tz.local
     );
 
@@ -47,4 +45,5 @@ class Notifications {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
+  
 }

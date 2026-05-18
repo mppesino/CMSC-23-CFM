@@ -287,7 +287,6 @@ class RequestFeed extends StatelessWidget {
 
         final requests = snapshot.data!;
 
-
         requests.sort((a, b) {
           final aTime = (a['createdAt'] as Timestamp).millisecondsSinceEpoch;
           final bTime = (b['createdAt'] as Timestamp).millisecondsSinceEpoch;
