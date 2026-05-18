@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 class PostCard extends StatelessWidget {
   final Post post;
   final FeedType type;
-  const PostCard({required this.post, required this.type});
+  const PostCard({super.key, required this.post, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class PostCard extends StatelessWidget {
 
 class PostCardHeader extends StatelessWidget {
   final String? userId;
-  const PostCardHeader({required this.userId});
+  const PostCardHeader({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +204,7 @@ class PostFeed extends StatelessWidget {
         if (posts.isEmpty) {
           return Column(
             children: [
-              if (header != null) header!,
+              ?header,
               const SizedBox(height: 20),
               Center(
                   child: Text(
@@ -275,7 +275,7 @@ class RequestFeed extends StatelessWidget {
         if (requests.isEmpty) {
           return Column(
             children: [
-              if (header != null) header!,
+              ?header,
               const SizedBox(height: 20),
               Center(
                 child: Text(

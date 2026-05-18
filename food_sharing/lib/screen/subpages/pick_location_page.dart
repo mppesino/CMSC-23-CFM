@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:osm_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 

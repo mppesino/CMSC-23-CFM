@@ -19,8 +19,6 @@ class SettingsPageState extends State<SettingsPage> {
   bool _enablePickups = false;
 
   double _discoveryRadius = 5.0;
-  bool _dietaryAlerts = true;
-  bool _reminderAlerts = true;
 
   @override
   void initState(){ //current user profile settings
