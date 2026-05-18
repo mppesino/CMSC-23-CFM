@@ -10,7 +10,6 @@ import 'package:food_sharing/provider/users_provider.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/screen/subpages/post_detail.dart';
 
-// 2. With mocktail, your mock definitions are just ONE clean line!
 class MockUsersProvider extends Mock implements UsersProvider {}
 class MockPostsProvider extends Mock implements PostsProvider {}
 

@@ -27,7 +27,6 @@ class SettingsPageState extends State<SettingsPage> {
     final currentUser = context.read<UsersProvider>().currentUser;
     if(currentUser != null){
       _discoveryRadius = currentUser.discoveryRadius;
-      
       _enableDiscovery = currentUser.enableDiscovery;
       _enableRequests = currentUser.enableRequests;
       _enablePickups = currentUser.enablePickups;
@@ -61,6 +60,8 @@ class SettingsPageState extends State<SettingsPage> {
                     const SnackBar(content: Text('Preferences saved successfully!'), backgroundColor: BrandColors.green,)
                   );
                 }
+                
+                Navigator.pop(context);
               }
 
             }, 
