@@ -21,10 +21,15 @@ import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/screen/subpages/edit_user_profile.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 
+import 'package:food_sharing/notifications.dart';
+import 'package:flutter/material.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  await Notifications.init();
+  
   runApp(
     MultiProvider(
       providers: [

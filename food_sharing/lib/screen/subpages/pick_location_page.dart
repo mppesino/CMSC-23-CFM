@@ -16,8 +16,8 @@ class PickLocationPage extends StatelessWidget {
         
         onPicked: (pickedData) {
           Navigator.pop(context, {
-            "lat": round(pickedData.latLong.latitude,decimals:4),
-            "lng": round(pickedData.latLong.longitude,decimals:4),
+            "lat": double.parse(pickedData.latLong.latitude.toStringAsFixed(4)),  //replaced to avoid unhandled runtime exception
+            "lng": double.parse(pickedData.latLong.longitude.toStringAsFixed(4)),
             "address": addressFormat(pickedData.address),
           });
         },

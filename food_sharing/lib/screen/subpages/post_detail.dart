@@ -17,6 +17,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:food_sharing/screen/subpages/qr_scanner.dart';
 
+import 'package:food_sharing/notifications.dart';
+
 class PostDetailPage extends StatelessWidget {
   final Post post;
   final _commentController = TextEditingController();
@@ -566,6 +568,13 @@ Future<void> _handleAccept(
         'reservedForId': user.userId,
         'status': PostStatus.reserved.name
         }
+      );
+      
+      //SCHEDULE A REMINDER UPON ACCEPTING:
+      await Notifications.schedulePickupReminder(
+        id: post.id.hashCode, //generate a unique integer notification ID
+        postTitle: post.title,
+        pickupTime: post.pickupDateTime,
       );
 
       if (context.mounted) {

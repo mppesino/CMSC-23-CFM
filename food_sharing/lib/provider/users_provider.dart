@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:food_sharing/api/firebase_users_api.dart';
 import '../models/user.dart';
 
+import 'package:flutter/foundation.dart';
+
 class UsersProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _usersStream;
   final FirebaseUsersApi firebaseService = FirebaseUsersApi();
@@ -89,11 +91,17 @@ Future<void> editUser(String uid, Map<String, dynamic> user) async {
       tags: user['tags'] != null
           ? List<String>.from(user['tags'])
           : _currentUser!.tags,
+
+
+      enableDiscovery: user['enableDiscovery'] ?? _currentUser!.enableDiscovery,
+      enablePickups: user['enablePickups'] ?? _currentUser!.enablePickups,
+      enableRequests: user['enableRequests'] ?? _currentUser!.enableRequests,
+      discoveryRadius: (user['discoveryRadius'] as num?)?.toDouble() ?? _currentUser!.discoveryRadius,
     );
   }
   notifyListeners();
 
-  print(message);
+  debugPrint(message);
 }
 
   Future<bool> isUsernameTaken(String username, {String? uid}) async {
