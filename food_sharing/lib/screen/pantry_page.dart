@@ -23,14 +23,14 @@ class PantryPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: BrandColors.cream,
           elevation: 0,
-          toolbarHeight: 20, // Low height since we only want the title/tabs
+          toolbarHeight: 10, 
           bottom: TabBar(
             labelColor: BrandColors.darkGreen, // Adjust based on your theme
             unselectedLabelColor: BrandColors.gray,
             indicatorColor: BrandColors.darkGreen, // Customize indicator color
-            labelStyle: TextStyleTheme.subtitle_bold, 
+            labelStyle: TextStyleTheme.subtitle_bold_sm, 
             tabs: const [
-              Tab(text: "Discovery"),
+              Tab(text: "Discovery",),
               Tab(text: "For You"),
             ],
           ),
