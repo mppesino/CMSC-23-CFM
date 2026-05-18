@@ -14,6 +14,9 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:food_sharing/screen/subpages/qr_scanner.dart';
+
 class PostDetailPage extends StatelessWidget {
   final Post post;
   final _commentController = TextEditingController();
@@ -229,182 +232,246 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-Widget _buildGiverView(BuildContext context, Post post) {
-  final requesterIds = post.requesterIds ?? [];
+  Widget _buildGiverView(BuildContext context, Post post) {
+    final requesterIds = post.requesterIds ?? [];
 
-  return Theme(
-    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-    child: 
-    post.reservedForId == null ?
-    ExpansionTile(
-      tilePadding: EdgeInsets.zero,
-      title: Text(
-        "Requests (${requesterIds.length})",
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
-      initiallyExpanded: requesterIds.isNotEmpty, 
-      iconColor: BrandColors.black,
-      children: [
-        if (requesterIds.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: Center(child: Text("No requests yet", style: TextStyle(fontSize: 18),)),
-          )
-        else
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: requesterIds.length,
-            itemBuilder: (context, index) {
-              final requesterId = requesterIds[index];
-
-              return FutureBuilder(
-                future: context.read<UsersProvider>().getUserById(requesterId),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const ListTile(title: Text("Loading..."));
-                  }
-
-                  final user = snapshot.data!;
-
-                  return Card(
-                    elevation: 0, 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey.shade200),
-                    ),
-                    color: BrandColors.white,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      leading: CircleAvatar(
-                        radius: 20,
-                        child: ProfilePicture(user: user),
-                      ),
-                      title: Text(
-                        "@${user.userName}",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        (post.requesterAppeals?[requesterId]?.trim().isNotEmpty ?? false)
-                            ? post.requesterAppeals![requesterId]!
-                            : "Requested this item",
-                      ),
-                      trailing: PrimaryButton(
-                        icon: Icons.check,
-                        onPressed: () {_handleAccept(context, user, post);},
-                        style: "green",
-                        size: const Size(45, 45),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: 
+      post.reservedForId == null ?
+      ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        title: Text(
+          "Requests (${requesterIds.length})",
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
-      ],
-    )
-    :
-    Column(children: [
-      const Text(
-        "Reserved For",
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
         ),
-      ),
-      SizedBox(height: 10,),
-      PostCardHeader(userId: post.reservedForId),
-      SizedBox(height: 25,),
-      Center(child: PrimaryButton(text:"Generate QR", onPressed: () {}, style:"yellow")),
+        initiallyExpanded: requesterIds.isNotEmpty, 
+        iconColor: BrandColors.black,
+        children: [
+          if (requesterIds.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(child: Text("No requests yet", style: TextStyle(fontSize: 18),)),
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: requesterIds.length,
+              itemBuilder: (context, index) {
+                final requesterId = requesterIds[index];
 
-      
-      ],),
-    );
-}
+                return FutureBuilder(
+                  future: context.read<UsersProvider>().getUserById(requesterId),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const ListTile(title: Text("Loading..."));
+                    }
 
-Widget _buildRequesterView(BuildContext context, Post post, String currentUid) {
-  final bool isReservedForMe = post.reservedForId == currentUid;
-  final bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
-  final bool disabled = post.status == PostStatus.reserved || alreadyRequested;
+                    final user = snapshot.data!;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      // 1. Show TextField only if the item is available and not yet requested by user
-      if (!disabled && !isReservedForMe) ...[
-        TextField(
-          controller: _commentController,
-          maxLines: 1,
-          cursorColor: BrandColors.darkGreen,
-          decoration: InputDecoration(
-            hintText: 'Why do you need this item?',
-            filled: true,
-            fillColor: Colors.grey.shade100,
-            label: const Text("Request Message"),
-            labelStyle: TextStyle(color: BrandColors.darkGreen),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+                    return Card(
+                      elevation: 0, 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: Colors.grey.shade200),
+                      ),
+                      color: BrandColors.white,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        leading: CircleAvatar(
+                          radius: 20,
+                          child: ProfilePicture(user: user),
+                        ),
+                        title: Text(
+                          "@${user.userName}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          (post.requesterAppeals?[requesterId]?.trim().isNotEmpty ?? false)
+                              ? post.requesterAppeals![requesterId]!
+                              : "Requested this item",
+                        ),
+                        trailing: PrimaryButton(
+                          icon: Icons.check,
+                          onPressed: () {_handleAccept(context, user, post);},
+                          style: "green",
+                          size: const Size(45, 45),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
+        ],
+      )
+      :
+      Column(children: [
+        const Text(
+          "Reserved For",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 15),
-      ],
 
-      if (isReservedForMe)
-        Column(
-          children: [
-            const Text(
-              "Reserved For You!", 
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        SizedBox(height: 10,),
+
+        PostCardHeader(userId: post.reservedForId),
+
+        SizedBox(height: 25,),
+
+        Center(   //GENERATE QR HERE
+          child: PrimaryButton(
+            text:"Generate QR", 
+            style:"yellow",
+            onPressed: () {
+              _showQRDialog(context, post.id ?? "");
+            }, )), 
+
+        
+        ],),
+      );
+  }
+
+  void _showQRDialog(BuildContext context, String postID){
+    showDialog(context: context, builder: (ctx) => AlertDialog(
+      backgroundColor: BrandColors.white,
+      title: const Text("QR Verification", textAlign: TextAlign.center),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        const Text("Have the receiver scan this QR code to confirm and complete the purchase.",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black45),
+        ),
+
+        const SizedBox(height: 20,),
+
+        SizedBox(
+          width: 200,
+          height: 200,
+          child: QrImageView(data: postID, version: QrVersions.auto, size: 200, gapless: false,)
+        )
+
+
+        ],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(ctx), 
+        child: const Text("Close", style: TextStyle(color: BrandColors.darkGreen),))
+      ],
+      
+      )
+    );
+  }
+
+  Widget _buildRequesterView(BuildContext context, Post post, String currentUid) {
+    final bool isReservedForMe = post.reservedForId == currentUid;
+    final bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
+    final bool disabled = post.status == PostStatus.reserved || alreadyRequested;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 1. Show TextField only if the item is available and not yet requested by user
+        if (!disabled && !isReservedForMe) ...[
+          TextField(
+            controller: _commentController,
+            maxLines: 1,
+            cursorColor: BrandColors.darkGreen,
+            decoration: InputDecoration(
+              hintText: 'Why do you need this item?',
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              label: const Text("Request Message"),
+              labelStyle: TextStyle(color: BrandColors.darkGreen),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
               ),
             ),
-            const SizedBox(height: 25),
-            PrimaryButton(
-              text: "Scan QR", 
-              onPressed: () {}, 
-              style: "green",
-            ),
+          ),
+          const SizedBox(height: 15),
+        ],
 
-          ],
-        )
-      else
-        // DEFAULT STATE: Show the Request Button
-        Center(
-          child: _buildRequestButton(context, post, currentUid, alreadyRequested),
-        ),
-    ],
-  );
-}
+        if (isReservedForMe)
+          Column(
+            children: [
+              const Text(
+                "Reserved For You!", 
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 25),
+              PrimaryButton(
+                text: "Scan QR", 
+                style: "green",
+                onPressed: () async {
+                  //navigate to scanner and await verification match on post:
+                  final result = await Navigator.push<bool>(context, MaterialPageRoute(
+                    builder: (context) => QRScanner(expectedPostId: post.id ?? ""))
+                  );
 
-Widget _buildRequestButton(BuildContext context, Post post, String currentUid,  bool alreadyRequested) {
+                  if(!context.mounted) return;
 
-  final bool disabled =
-      post.status == PostStatus.reserved || alreadyRequested;
+                  //adjust state based on match success:
+                  if(result == true){  //if successful, update Firestore document:
+                    await context.read<PostsProvider>().updatePostStatus(post.id ?? "", PostStatus.completed);
 
-  return PrimaryButton(
-    text: post.reservedForId == currentUid
-    ? "Reserved For You"
-    : alreadyRequested
-        ? "Requested"
-        : disabled
-            ? "Reserved"
-            : "Request Item",
-      onPressed: disabled ? null : () {
-      _handleRequest(context, currentUid, post);
-    },
-    style: disabled ? "gray" : "green",
-  );
-}
+                    if(!context.mounted) return;
 
-Future<void> _handleRequest(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Purchase confirmed. Item is now marked as completed."),
+                      backgroundColor: BrandColors.green,
+                    ));
+                  }else if(result == false){ //if not successful:
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("ERROR: QR code does not match this item."),
+                      backgroundColor: BrandColors.darkRed,
+                    ));
+                  }
+                }, 
+                
+              ),
+
+            ],
+          )
+        else
+          // DEFAULT STATE: Show the Request Button
+          Center(
+            child: _buildRequestButton(context, post, currentUid, alreadyRequested),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildRequestButton(BuildContext context, Post post, String currentUid,  bool alreadyRequested) {
+
+    final bool disabled =
+        post.status == PostStatus.reserved || alreadyRequested;
+
+    return PrimaryButton(
+      text: post.reservedForId == currentUid
+      ? "Reserved For You"
+      : alreadyRequested
+          ? "Requested"
+          : disabled
+              ? "Reserved"
+              : "Request Item",
+        onPressed: disabled ? null : () {
+        _handleRequest(context, currentUid, post);
+      },
+      style: disabled ? "gray" : "green",
+    );
+  }
+
+  Future<void> _handleRequest(
     BuildContext context,
     String? currentUid,
     Post post
