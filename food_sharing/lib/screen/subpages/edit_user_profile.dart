@@ -6,6 +6,7 @@ import 'package:food_sharing/screen/component/profile.dart';
 import 'package:food_sharing/screen/component/sections.dart';
 import 'package:food_sharing/utils.dart';
 import 'package:food_sharing/provider/users_provider.dart';
+import 'package:food_sharing/provider/auth_provider.dart'; 
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,7 +44,6 @@ class EditUserPageState extends State<EditUserPage> {
     _bioController = TextEditingController(text: user?.bio ?? "");
 
     selectedTags.addAll(user?.tags ?? []);
-
   }
 
   @override
@@ -62,7 +62,7 @@ class EditUserPageState extends State<EditUserPage> {
           : selectedTags.add(tag);
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final user = context.read<UsersProvider>().currentUser;
@@ -81,52 +81,54 @@ class EditUserPageState extends State<EditUserPage> {
         children: [
           FullHeightColumn(
             children: [
-                SizedBox(height: 20),
-                Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  
-                Padding(padding: EdgeInsets.all(15), child:ProfilePicture(user: user,)),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: ProfilePicture(
+                        user: user,
+                      )),
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: IconButton(
+                      icon: const Icon(Icons.camera_alt),
+                      onPressed: () async {
+                        final image = await ImagePicker().pickImage(
+                          source: ImageSource.camera,
+                          imageQuality: 70,
+                        );
 
-                SizedBox(
-                width: 50,
-                height: 50,
-                child: IconButton(
-                  icon: const Icon(Icons.camera_alt),
-                  onPressed: () async {
-                      final image = await ImagePicker().pickImage(
-                      source: ImageSource.camera,
-                      imageQuality: 70,
-                    );
+                        if (image == null) return;
 
-                    if (image == null) return;
+                        setState(() {
+                          _isLoading = true;
+                        });
 
-                    setState(() {
-                      _isLoading = true;
-                    });
+                        final compressedBytes = await compressImage(image);
+                        final base64image = base64Encode(compressedBytes);
 
+                        final usersProvider = context.read<UsersProvider>();
 
-                    final compressedBytes = await compressImage(image);
-                    final base64image = base64Encode(compressedBytes);
+                        await usersProvider.editUser(
+                          usersProvider.currentUser!.userId!,
+                          {
+                            'profilePicture': base64image,
+                            'isVerified': true
+                          },
+                        );
 
-                    final usersProvider = context.read<UsersProvider>();
-
-                    await usersProvider.editUser(
-                      usersProvider.currentUser!.userId!,
-                      {
-                        'profilePicture': base64image,
-                        'isVerified': true
+                        setState(() {
+                          _isLoading = false;
+                        });
                       },
-                    );
-
-                    setState(() {
-                        _isLoading = false;
-                    });
-                  },
-
-    
-                ),
+                    ),
+                  ),
+                ],
               ),
-              ],),
-    
               Expanded(
                 child: Form(
                   key: _editUserFormKey,
@@ -150,10 +152,10 @@ class EditUserPageState extends State<EditUserPage> {
                                   decoration: TextStyleTheme.textInput(
                                     label: "First Name",
                                   ),
-                                  validator: (value) =>
-                                      value == null || value.isEmpty
-                                          ? "Enter first name"
-                                          : null,
+                                  validator: (value) => value == null ||
+                                          value.isEmpty
+                                      ? "Enter first name"
+                                      : null,
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -164,10 +166,10 @@ class EditUserPageState extends State<EditUserPage> {
                                   decoration: TextStyleTheme.textInput(
                                     label: "Last Name",
                                   ),
-                                  validator: (value) =>
-                                      value == null || value.isEmpty
-                                          ? "Enter last name"
-                                          : null,
+                                  validator: (value) => value == null ||
+                                          value.isEmpty
+                                      ? "Enter last name"
+                                      : null,
                                 ),
                               ),
                             ],
@@ -213,36 +215,30 @@ class EditUserPageState extends State<EditUserPage> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10),
-
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: FoodTags.dietaryTags
                                     .map((tag) => SelectableChip(
                                           label: tag,
-                                          selected:
-                                              selectedTags.contains(tag),
+                                          selected: selectedTags.contains(tag),
                                           onTap: () => _toggleTag(tag),
                                         ))
                                     .toList(),
                               ),
-
                               const SizedBox(height: 20),
-
                               const Text(
                                 'Food Categories',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10),
-
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: FoodTags.categoryTags
                                     .map((tag) => SelectableChip(
                                           label: tag,
-                                          selected:
-                                              selectedTags.contains(tag),
+                                          selected: selectedTags.contains(tag),
                                           onTap: () => _toggleTag(tag),
                                         ))
                                     .toList(),
@@ -268,7 +264,6 @@ class EditUserPageState extends State<EditUserPage> {
               ),
             ],
           ),
-
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.4),
@@ -292,6 +287,7 @@ class EditUserPageState extends State<EditUserPage> {
     });
 
     final usersProvider = context.read<UsersProvider>();
+    final authProvider = context.read<AppAuthProvider>();
 
     bool isTaken = await usersProvider.isUsernameTaken(
       _userNameController.text,
@@ -316,6 +312,8 @@ class EditUserPageState extends State<EditUserPage> {
         'tags': selectedTags.toList(),
       },
     );
+
+    await authProvider.refreshUser();
 
     if (!mounted) return;
 

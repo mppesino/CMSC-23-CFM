@@ -6,6 +6,17 @@ import '../models/post.dart';
 class PostsProvider with ChangeNotifier {
   final FirebasePostsApi firebaseService = FirebasePostsApi();
 
+  Stream<QuerySnapshot> getPostsByInterests(List<String> interests) {
+    if (interests.isEmpty) {
+      return firebaseService.getAllPosts(); 
+    }
+
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .where('tags', arrayContainsAny: interests)
+        .snapshots();
+  }
+
   Stream<QuerySnapshot> getAllPosts() {
     return firebaseService.getAllPosts();
   }
@@ -20,12 +31,9 @@ class PostsProvider with ChangeNotifier {
 
   Future<Post?> getPostById(String id) async {
     final doc = await firebaseService.getPost(id);
-
     if (!doc.exists) return null;
-
     final data = doc.data() as Map<String, dynamic>;
     data['id'] = doc.id;
-
     return Post.fromJson(data);
   }
 
