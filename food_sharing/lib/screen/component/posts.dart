@@ -430,6 +430,7 @@ class RequestFeed extends StatelessWidget {
   Widget _buildRequestStatusTag(Map<String, dynamic> data, String currentUid, BuildContext context) {
   final bool isRequestedByMe = data['requesterIds'].contains(currentUid); 
   final bool isReservedForMe = data['reservedForId'] == currentUid;
+  final bool isCompleted = data['status'] == PostStatus.completed.name;
 
   String tagLabel = "";
   Color backgroundColor = Colors.transparent;
@@ -439,10 +440,14 @@ class RequestFeed extends StatelessWidget {
     tagLabel = "Pending Request";
     textColor = BrandColors.green;
     backgroundColor = BrandColors.green; 
-  } else if (isReservedForMe) {
+  } else if (isReservedForMe && !isCompleted) {
     tagLabel = "Reserved For you";
     textColor = BrandColors.yellow;
     backgroundColor = BrandColors.yellow;
+  } else if (isCompleted) {
+    tagLabel = "Completed";
+    textColor = BrandColors.gray;
+    backgroundColor = BrandColors.darkGray;
   } else {
     return const SizedBox.shrink();
   }

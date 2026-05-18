@@ -30,217 +30,192 @@ class PostDetailPage extends StatelessWidget {
     final postsProvider = context.watch<PostsProvider>();
     final usersProvider = context.watch<UsersProvider>();
 
-    Color tagColor = BrandColors.gray;
-    if(post.status == PostStatus.available){
-      tagColor = BrandColors.green;
-    } else if (post.status == PostStatus.reserved){
-      tagColor = BrandColors.yellow;
-    } else if (post.status == PostStatus.completed){
-      tagColor = BrandColors.gray;
-    } 
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: postsProvider.streamPostById(post.id ?? ""),
+      builder: (context, snapshot) {
+        Post livePost = post;
 
-    return Scaffold(
-      backgroundColor: BrandColors.white,
-      appBar: AppBar(
-        backgroundColor: BrandColors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-        title: Text(post.title, style: TextStyleTheme.subtitle_bold,),
-        actions: [
-        if (post.userId == usersProvider.currentUser?.userId)
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.more_horiz, color: Colors.black),
-          color: Colors.white, 
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          
-          onSelected: (value) {
-            if (value == 'delete') {
-              Navigator.pop(context);
-              postsProvider.deletePost(post.id ?? "");
-            }
-          },
-        itemBuilder: (BuildContext context) => [
-          const PopupMenuItem<String>(
-            value: 'delete',
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                'Delete Post',
-                style: TextStyle(color: Colors.black, fontSize: 18),
-              ),
-            ),
-          ),
-        ],
-        )      
-        ]),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            
-            Container(
-              width: double.infinity,
-              height: 350,
-              color: Colors.grey[200],
-              child: post.foodPicture != null && post.foodPicture!.isNotEmpty
-                  ? Image.memory(
-                      base64Decode(post.foodPicture!),
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: 100,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
-                  : const Center(
-                      child: Icon(Icons.image, size: 100, color: Colors.grey),
-                    ),
-            ),
+        if (snapshot.hasData && snapshot.data!.exists) {
+          final data = snapshot.data!.data()!;
+          data['id'] = snapshot.data!.id;
+          livePost = Post.fromJson(data);
+        }
 
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  
-                  PostCardHeader(userId: post.userId,),  
-                  const SizedBox(height: 12),
-                  if (post.description.trim().isNotEmpty) ...[
-                    Text(
-                      post.description,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black87,
-                        height: 1.5,
+        Color tagColor = BrandColors.gray;
+        if (livePost.status == PostStatus.available) {
+          tagColor = BrandColors.green;
+        } else if (livePost.status == PostStatus.reserved) {
+          tagColor = BrandColors.yellow;
+        } else if (livePost.status == PostStatus.completed) {
+          tagColor = BrandColors.gray;
+        }
+
+        // If the QR Dialog is open on the Giver's side when status becomes completed,
+        // you might optionally want to pop the dialog. Firestore state drives this now.
+
+        return Scaffold(
+          backgroundColor: BrandColors.white,
+          appBar: AppBar(
+            backgroundColor: BrandColors.white,
+            foregroundColor: Colors.black,
+            elevation: 0,
+            title: Text(livePost.title, style: TextStyleTheme.subtitle_bold),
+            actions: [
+              if (livePost.userId == usersProvider.currentUser?.userId)
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_horiz, color: Colors.black),
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  onSelected: (value) {
+                    if (value == 'delete') {
+                      Navigator.pop(context);
+                      postsProvider.deletePost(livePost.id ?? "");
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    const PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('Delete Post', style: TextStyle(color: Colors.black, fontSize: 18)),
                       ),
                     ),
-                    const SizedBox(height: 25),
                   ],
-
-
-                if (post.tags.isNotEmpty) ...[
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: post.tags
-                        .map((cat) => _buildTagChip(cat, Colors.blue))
-                        .toList(),
-                  ),
-                  const SizedBox(height: 25),
-                  ],
-
-                  
-                  Row(
+                )
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 350,
+                  color: Colors.grey[200],
+                  child: livePost.foodPicture != null && livePost.foodPicture!.isNotEmpty
+                      ? Image.memory(
+                          base64Decode(livePost.foodPicture!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Center(
+                            child: Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                          ),
+                        )
+                      : const Center(child: Icon(Icons.image, size: 100, color: Colors.grey)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.event,
-                        color: BrandColors.gray,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        "Expires: ${DateFormat('MMMM dd, yyyy').format(post.expiration)}",
-                        style: const TextStyle(
-                          color: BrandColors.gray,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                      PostCardHeader(userId: livePost.userId),
+                      const SizedBox(height: 12),
+                      if (livePost.description.trim().isNotEmpty) ...[
+                        Text(
+                          livePost.description,
+                          style: const TextStyle(fontSize: 18, color: Colors.black87, height: 1.5),
                         ),
-                      ),
-                    ],
-                  ),
-                const SizedBox(height: 25),
-
-                  const Text(
-                    "Status",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildTagChip(post.status == PostStatus.available ? "Available" 
-                                : post.status == PostStatus.reserved ? "Reserved"
-                                : post.status == PostStatus.completed ? "Completed" : "Error", tagColor),
-                  const SizedBox(height: 25),
-                
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Pickup Details",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    const SizedBox(height: 4),
-                    InkWell(
-                      onTap: () async {
-                      final url = Uri.parse(
-                        "https://www.google.com/maps/search/?api=1&query=${post.postLat},${post.postLng}",
-                      );
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center, 
+                        const SizedBox(height: 25),
+                      ],
+                      if (livePost.tags.isNotEmpty) ...[
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: livePost.tags.map((cat) => _buildTagChip(cat, Colors.blue)).toList(),
+                        ),
+                        const SizedBox(height: 25),
+                      ],
+                      Row(
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                            children:[
-                              Text(
-                                post.pickupAddress,
-                                style: const TextStyle(fontSize: 18, color: Colors.black87, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "${DateFormat('MMMM dd, yyyy  h:mm a').format(post.pickupDateTime)}",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                ))
-                            ]
-                          )),
-                  
-                          const Padding(
-                            padding: EdgeInsets.all(12.0), 
-                            child: Icon(
-                              Icons.location_on,
-                              color: Colors.black, 
-                              size: 26,
+                          const Icon(Icons.event, color: BrandColors.gray, size: 20),
+                          const SizedBox(width: 6),
+                          Text(
+                            "Expires: ${DateFormat('MMMM dd, yyyy').format(livePost.expiration)}",
+                            style: const TextStyle(color: BrandColors.gray, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+                      const Text("Status", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 10),
+                      _buildTagChip(
+                        livePost.status == PostStatus.available ? "Available"
+                        : livePost.status == PostStatus.reserved ? "Reserved"
+                        : livePost.status == PostStatus.completed ? "Completed" : "Error", 
+                        tagColor
+                      ),
+                      const SizedBox(height: 25),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Pickup Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          const SizedBox(height: 4),
+                          InkWell(
+                            onTap: () async {
+                              final url = Uri.parse(
+                                "https://www.google.com/maps/search/?api=1&query=${livePost.postLat},${livePost.postLng}",
+                              );
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            },
+                            borderRadius: BorderRadius.circular(8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        livePost.pickupAddress,
+                                        style: const TextStyle(fontSize: 18, color: Colors.black87, fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        "${DateFormat('MMMM dd, yyyy  h:mm a').format(livePost.pickupDateTime)}",
+                                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: Icon(Icons.location_on, color: Colors.black, size: 26),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 25),
+                      
+                      // Using livePost ensures that when the status switches to completed, 
+                      // the Giver view handles layout changes gracefully.
+                      livePost.userId == usersProvider.currentUser?.userId
+                          ? _buildGiverView(context, livePost)
+                          : _buildRequesterView(context, livePost, usersProvider.currentUser?.userId ?? ""),
+                      
+                      const SizedBox(height: 64),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 25),
-
-                post.userId == usersProvider.currentUser?.userId ?
-                _buildGiverView(context, post)
-                :_buildRequesterView(context, post, usersProvider.currentUser?.userId ?? ""),
-                
-                SizedBox(height: 64,),
-
-                ],
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildGiverView(BuildContext context, Post post) {
+
+    if (post.status == PostStatus.completed) {
+        return SizedBox.shrink();
+      }
+
     final requesterIds = post.requesterIds ?? [];
 
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: 
-      post.reservedForId == null ?
+      (post.reservedForId == null) ?
       ExpansionTile(
         tilePadding: EdgeInsets.zero,
         title: Text(
@@ -374,7 +349,7 @@ class PostDetailPage extends StatelessWidget {
   Widget _buildRequesterView(BuildContext context, Post post, String currentUid) {
     final bool isReservedForMe = post.reservedForId == currentUid;
     final bool alreadyRequested = (post.requesterIds ?? []).contains(currentUid);
-    final bool disabled = post.status == PostStatus.reserved || alreadyRequested;
+    final bool disabled = post.status == PostStatus.reserved || alreadyRequested || post.status == PostStatus.completed;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -400,7 +375,7 @@ class PostDetailPage extends StatelessWidget {
           const SizedBox(height: 15),
         ],
 
-        if (isReservedForMe)
+        if (isReservedForMe && (post.status != PostStatus.completed))
           Column(
             children: [
               const Text(
@@ -427,7 +402,7 @@ class PostDetailPage extends StatelessWidget {
                     await context.read<PostsProvider>().updatePostStatus(post.id ?? "", PostStatus.completed);
 
                     if(!context.mounted) return;
-
+                    Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Purchase confirmed. Item is now marked as completed."),
                       backgroundColor: BrandColors.green,
@@ -444,8 +419,7 @@ class PostDetailPage extends StatelessWidget {
 
             ],
           )
-        else
-          // DEFAULT STATE: Show the Request Button
+          else if (post.status == PostStatus.available)
           Center(
             child: _buildRequestButton(context, post, currentUid, alreadyRequested),
           ),

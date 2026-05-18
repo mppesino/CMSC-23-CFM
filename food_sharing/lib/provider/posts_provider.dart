@@ -17,6 +17,13 @@ class PostsProvider with ChangeNotifier {
         .snapshots();
   }
 
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamPostById(String id) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .snapshots();
+  }
+
   Stream<QuerySnapshot> getAllPosts() {
     return firebaseService.getAllPosts();
   }
