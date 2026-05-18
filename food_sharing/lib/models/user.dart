@@ -11,6 +11,14 @@ class User {
   bool isVerified;
   List<String>? tags;
 
+  double discoveryRadius;
+  bool alertOnDietaryMatch;
+  bool alertOnReminders;
+
+  bool enableDiscovery;
+  bool enableRequests;
+  bool enablePickups;
+
   User({
     required this.userId,
     required this.email,
@@ -22,6 +30,14 @@ class User {
     required this.isOnboarded,
     required this.isVerified,
     this.tags,
+
+    this.discoveryRadius = 5,   //default: 5km radius
+    this.alertOnDietaryMatch = true,
+    this.alertOnReminders = true,
+
+    this.enableDiscovery = false,
+    this.enablePickups = false,
+    this.enableRequests = false
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -38,7 +54,16 @@ class User {
       tags: json['tags'] != null
           ? List<String>.from(json['tags'])
           : null,
-        );
+
+      discoveryRadius: (json['discoveryRadius'] as num?)?.toDouble() ?? 5,
+      alertOnDietaryMatch: json['alertOnDietaryMatch'] ?? true,
+      alertOnReminders: json['alertOnReminders'] ?? true,
+
+      enableDiscovery: json['enableDiscovery'] ?? false,
+      enablePickups: json['enablePickups'] ?? false,
+      enableRequests: json['enableRequests'] ?? false,
+    );
+      
   }
 
 
@@ -54,6 +79,14 @@ class User {
       'isVerified': isVerified,
       'isOnboarded': isOnboarded,
       'tags': tags,
+
+      'discoveryRadius': discoveryRadius,
+      'alertOnDietaryMatch': alertOnDietaryMatch,
+      'alertOnReminders': alertOnReminders,
+
+      'enableDiscovery': enableDiscovery,
+      'enablePickups': enablePickups,
+      'enableRequests': enableRequests,
     };
   }
 }
