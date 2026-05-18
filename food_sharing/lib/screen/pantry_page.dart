@@ -44,7 +44,6 @@ class PantryPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: PostFeed(
-                    // Pass an empty list (or your specific provider method for all posts)
                     stream: postsProvider.getPostsByInterests([]), 
                     type: FeedType.pantry,
                   ),

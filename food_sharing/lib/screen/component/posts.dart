@@ -200,7 +200,16 @@ class PostFeed extends StatelessWidget {
           return const Center(child: CircularProgressIndicator(color: BrandColors.green));
         }
 
-        final posts = snapshot.data!.docs;
+        final posts = snapshot.data!.docs.where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          final statusString = data['status'] as String?;
+          
+          if (type == FeedType.pantry && (statusString == PostStatus.completed.name || statusString == PostStatus.reserved.name)) {
+            return false;
+          }
+          return true;
+        }).toList();
+
         if (posts.isEmpty) {
           return Column(
             children: [
