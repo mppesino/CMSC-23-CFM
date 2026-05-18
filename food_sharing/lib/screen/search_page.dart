@@ -23,6 +23,8 @@ class _SearchPageState extends State<SearchPage> {
   // storage for selected tags
   final Set<String> _selectedTags = {};
 
+final FocusNode _searchFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +35,8 @@ class _SearchPageState extends State<SearchPage> {
   // clean up
   @override
   void dispose() {
-    _searchController.dispose();
+      _searchFocusNode.dispose();
+  _searchController.dispose();
     super.dispose();
   }
 
@@ -129,44 +132,58 @@ class _SearchPageState extends State<SearchPage> {
 
   // search bar container
   // the tags selected will also show here!!!
-  Widget _buildSearchBar() {
-    return Container(
+
+Widget _buildSearchBar() {
+  return GestureDetector(
+    onTap: () {
+      _searchFocusNode.requestFocus();
+    },
+    child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: const Color.fromRGBO(59, 109, 17, 1)),
       ),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 4,
-        crossAxisAlignment: WrapCrossAlignment.center,
+      child: Row(
         children: [
-          // show here the selected tags
-          ..._selectedTags.map((tag) => Chip(
+          Expanded(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 80),
+                  child: TextField(
+                    focusNode: _searchFocusNode,
+                    controller: _searchController,
+                    cursorColor: BrandColors.black,
+                    decoration: const InputDecoration(
+                      hintText: "Search...",
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+                          ..._selectedTags.map((tag) => Chip(
                 label: Text(tag, style: const TextStyle(color: Colors.white, fontSize: 12)),
                 backgroundColor: const Color.fromRGBO(59, 109, 17, 1),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 onDeleted: () => _toggleKeyword(tag),
                 deleteIconColor: Colors.white,
               )),
-              // the input field will grow or shrink depending on how many tags are selected
-          IntrinsicWidth(
-            child: TextField(
-              controller: _searchController,
-              cursorColor: BrandColors.black,
-              decoration: const InputDecoration(
-                hintText: "Search...",
-                border: InputBorder.none,
-                isDense: true,
-              ),
-              style: const TextStyle(fontSize: 14),
+              ],
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   // ui for tags section
   Widget _buildSection(String title, List<String> tags) {
