@@ -196,6 +196,11 @@ class PostFeed extends StatelessWidget {
       stream: stream,
       
       builder: (context, snapshot) {
+        
+        if (snapshot.hasError) {
+          print(snapshot.error.toString());
+        }
+
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator(color: BrandColors.green));
         }
@@ -212,6 +217,7 @@ class PostFeed extends StatelessWidget {
 
         if (posts.isEmpty) {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ?header,
               const SizedBox(height: 20),
@@ -281,8 +287,16 @@ class RequestFeed extends StatelessWidget {
 
         final requests = snapshot.data!;
 
+
+        requests.sort((a, b) {
+          final aTime = (a['createdAt'] as Timestamp).millisecondsSinceEpoch;
+          final bTime = (b['createdAt'] as Timestamp).millisecondsSinceEpoch;
+          return bTime.compareTo(aTime);
+        });
+
         if (requests.isEmpty) {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ?header,
               const SizedBox(height: 20),
@@ -356,6 +370,7 @@ class RequestFeed extends StatelessWidget {
                           Expanded(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
 
                                 Expanded(

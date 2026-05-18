@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 enum PostStatus { available, reserved, completed }
 
 class Post {
@@ -16,6 +18,7 @@ class Post {
   double postLng;
   String pickupAddress;
   DateTime pickupDateTime;
+  DateTime createdAt;
 
   Post({
     this.id,
@@ -29,6 +32,7 @@ class Post {
     required this.postLng,
     required this.pickupAddress,
     required this.pickupDateTime,
+    required this.createdAt,
     this.foodPicture,
     this.reservedForId,
     this.requesterIds,
@@ -69,6 +73,12 @@ class Post {
         ? Map<String, String>.from(json['requesterAppeals']) 
         : {},
 
+    createdAt: json['createdAt'] is Timestamp
+        ? (json['createdAt'] as Timestamp).toDate()
+        : json['createdAt'] is String
+            ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
+            : DateTime.now(),
+
     expiration: json['expiration'] is String
         ? DateTime.parse(json['expiration'])
         : json['expiration'] != null
@@ -97,6 +107,7 @@ class Post {
       'postLng': postLng,
       'pickupAddress': pickupAddress,
       'pickupDateTime': pickupDateTime.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
     };
   }
 }

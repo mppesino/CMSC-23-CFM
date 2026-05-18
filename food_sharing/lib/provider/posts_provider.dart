@@ -14,6 +14,7 @@ class PostsProvider with ChangeNotifier {
     return FirebaseFirestore.instance
         .collection('posts')
         .where('tags', arrayContainsAny: interests)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 

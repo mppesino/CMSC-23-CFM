@@ -173,6 +173,15 @@ class _AddPostPageState extends State<AddPostPage> {
       return;
     }
 
+    if (!_pickupDateTime!.isBefore(_expiration!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Pickup must be before expiration date.'),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -195,7 +204,8 @@ class _AddPostPageState extends State<AddPostPage> {
       postLat: postLat!,
       postLng:  postLng!,
       pickupAddress: pickupAddress!,
-      pickupDateTime: _pickupDateTime!
+      pickupDateTime: _pickupDateTime!,
+      createdAt: DateTime.now()
     );
 
     // save post to firestore
