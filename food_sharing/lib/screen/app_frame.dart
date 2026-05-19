@@ -8,6 +8,8 @@ import 'package:food_sharing/screen/pantry_page.dart';
 import 'package:food_sharing/screen/profile_page.dart';
 import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/theme/app_theme.dart';
+import 'package:food_sharing/notifications.dart';
+import 'package:food_sharing/utils.dart';
 import 'package:provider/provider.dart';
 // ---------------------------------------------------------------------------------------
 

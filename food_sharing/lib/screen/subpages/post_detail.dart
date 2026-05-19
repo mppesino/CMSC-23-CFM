@@ -454,6 +454,7 @@ class PostDetailPage extends StatelessWidget {
   ) async {
     if (currentUid == null) return;
 
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -480,6 +481,13 @@ class PostDetailPage extends StatelessWidget {
     );
 
     if (confirmed == true) {
+
+      Notifications.showInstantNotif(
+        id: post.id.hashCode, //generate a unique integer notification ID
+        postTitle: post.title,
+        pickupTime: post.pickupDateTime,
+      );
+
       await context.read<PostsProvider>().editPost(
         post.id!,
         {
@@ -545,7 +553,7 @@ Future<void> _handleAccept(
       );
       
       //SCHEDULE A REMINDER UPON ACCEPTING:
-      await Notifications.schedulePickupReminder(
+      Notifications.showInstantNotif(
         id: post.id.hashCode, //generate a unique integer notification ID
         postTitle: post.title,
         pickupTime: post.pickupDateTime,

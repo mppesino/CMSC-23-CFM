@@ -2,6 +2,7 @@
 
 // IMPORTS ---------------------------------------------------------------------------------------
 import 'package:flutter/material.dart';
+import 'package:food_sharing/models/post.dart';
 import 'package:food_sharing/screen/component/posts.dart';
 import 'package:food_sharing/provider/posts_provider.dart';
 import 'package:food_sharing/provider/auth_provider.dart';

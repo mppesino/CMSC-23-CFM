@@ -120,4 +120,6 @@ Future<void> editUser(String uid, Map<String, dynamic> user) async {
     debugPrint(message);
     notifyListeners();
   }
+
+  
 }
