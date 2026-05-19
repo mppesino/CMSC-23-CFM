@@ -57,7 +57,33 @@ class Notifications {
 
   }
 
-  static Future<void> showNotificationTest() async {
+  static Future<void> showNearbyNotif({required int id, required String postTitle, required DateTime pickupTime}) async{
+   const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      'channel_id',
+      'General Notifications',
+      channelDescription: 'Notification channel',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails details =
+        NotificationDetails(
+      android: androidDetails,
+    );
+
+    await _notificationsPlugin.show(
+      id:id, 
+      title: '🥘 New Salo Post Nearby 🫕', 
+      body: '"$postTitle" with your interests posted nearby!', 
+      notificationDetails: details
+    );
+
+  }
+
+
+
+  static Future<void> alertScheduled() async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
       'channel_id',
@@ -74,7 +100,7 @@ class Notifications {
 
     await _notificationsPlugin.show(
       id:0,
-      title: 'Notification Scheduled',
+      title: '🥘Notification Scheduled🫕',
       body: 'Food item pick-up time has been scheduled',
       notificationDetails: details,
     );
@@ -110,7 +136,9 @@ static Future<void> schedulePickupReminder({
     iOS: DarwinNotificationDetails(),
   );
 
-  await _notificationsPlugin.zonedSchedule(
+  Notifications.alertScheduled();
+
+  _notificationsPlugin.zonedSchedule(
     id:id,
     title:'🥘Salo Pickup Reminder🫕',
     body:'Your pickup for "$postTitle" is in 1 hour!',
