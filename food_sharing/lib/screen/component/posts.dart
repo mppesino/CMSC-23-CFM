@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 class PostCard extends StatelessWidget {
   final Post post;
   final FeedType type;
-  const PostCard({required this.post, required this.type});
+  const PostCard({super.key, required this.post, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class PostCard extends StatelessWidget {
 
 class PostCardHeader extends StatelessWidget {
   final String? userId;
-  const PostCardHeader({required this.userId});
+  const PostCardHeader({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -196,15 +196,30 @@ class PostFeed extends StatelessWidget {
       stream: stream,
       
       builder: (context, snapshot) {
+        
+        if (snapshot.hasError) {
+          print(snapshot.error.toString());
+        }
+
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator(color: BrandColors.green));
         }
 
-        final posts = snapshot.data!.docs;
+        final posts = snapshot.data!.docs.where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          final statusString = data['status'] as String?;
+          
+          if (type == FeedType.pantry && (statusString == PostStatus.completed.name || statusString == PostStatus.reserved.name)) {
+            return false;
+          }
+          return true;
+        }).toList();
+
         if (posts.isEmpty) {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (header != null) header!,
+              ?header,
               const SizedBox(height: 20),
               Center(
                   child: Text(
@@ -272,10 +287,17 @@ class RequestFeed extends StatelessWidget {
 
         final requests = snapshot.data!;
 
+        requests.sort((a, b) {
+          final aTime = (a['createdAt'] as Timestamp).millisecondsSinceEpoch;
+          final bTime = (b['createdAt'] as Timestamp).millisecondsSinceEpoch;
+          return bTime.compareTo(aTime);
+        });
+
         if (requests.isEmpty) {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (header != null) header!,
+              ?header,
               const SizedBox(height: 20),
               Center(
                 child: Text(
@@ -347,6 +369,7 @@ class RequestFeed extends StatelessWidget {
                           Expanded(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
 
                                 Expanded(
@@ -421,6 +444,7 @@ class RequestFeed extends StatelessWidget {
   Widget _buildRequestStatusTag(Map<String, dynamic> data, String currentUid, BuildContext context) {
   final bool isRequestedByMe = data['requesterIds'].contains(currentUid); 
   final bool isReservedForMe = data['reservedForId'] == currentUid;
+  final bool isCompleted = data['status'] == PostStatus.completed.name;
 
   String tagLabel = "";
   Color backgroundColor = Colors.transparent;
@@ -430,10 +454,14 @@ class RequestFeed extends StatelessWidget {
     tagLabel = "Pending Request";
     textColor = BrandColors.green;
     backgroundColor = BrandColors.green; 
-  } else if (isReservedForMe) {
+  } else if (isReservedForMe && !isCompleted) {
     tagLabel = "Reserved For you";
     textColor = BrandColors.yellow;
     backgroundColor = BrandColors.yellow;
+  } else if (isCompleted) {
+    tagLabel = "Completed";
+    textColor = BrandColors.gray;
+    backgroundColor = BrandColors.darkGray;
   } else {
     return const SizedBox.shrink();
   }

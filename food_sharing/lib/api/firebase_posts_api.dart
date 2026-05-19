@@ -6,11 +6,16 @@ class FirebasePostsApi {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
   Stream<QuerySnapshot> getAllPosts() {
-    return db.collection('posts').snapshots(); 
+    return db.collection('posts')
+    .orderBy('createdAt', descending: true)
+    .snapshots(); 
   }
 
   Stream<QuerySnapshot> getPostsByUser(String? uid) {
-    return db.collection('posts').where('userId', isEqualTo: uid).snapshots(); 
+    return db.collection('posts')
+    .where('userId', isEqualTo: uid)
+    .orderBy('createdAt', descending: true)
+    .snapshots(); 
   }
 
   Future<DocumentSnapshot> getPost(String id) async {

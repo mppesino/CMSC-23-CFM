@@ -112,6 +112,12 @@ class TextStyleTheme {
     fontWeight: FontWeight.bold
   );
 
+    static final subtitle_bold_sm = GoogleFonts.sourGummy(
+    fontSize: 18,
+    color: BrandColors.black,
+    fontWeight: FontWeight.bold
+  );
+
   static final subtitle = GoogleFonts.sourGummy(
     fontSize: 16,
     fontWeight: FontWeight.w400,

@@ -14,6 +14,14 @@ class PostsProvider with ChangeNotifier {
     return FirebaseFirestore.instance
         .collection('posts')
         .where('tags', arrayContainsAny: interests)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamPostById(String id) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
         .snapshots();
   }
 

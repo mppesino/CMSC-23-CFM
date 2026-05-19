@@ -15,28 +15,50 @@ class PantryPage extends StatelessWidget {
 
     final userInterests = authProvider.customUserData?.tags ?? [];
 
-    return Scaffold(
-      backgroundColor: BrandColors.cream,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text(
-                  userInterests.isEmpty ? "All Items" : "Items for Your Interests",
-                  style: TextStyleTheme.subtitle_bold,
-                ),
-              ),
-              Expanded(
-                child: PostFeed(
-                  stream: postsProvider.getPostsByInterests(userInterests), 
-                  type: FeedType.pantry,
-                ),
-              ),
+    return DefaultTabController(
+      initialIndex: 1,
+      length: 2, // Number of tabs
+      child: Scaffold(
+        backgroundColor: BrandColors.cream,
+        appBar: AppBar(
+          backgroundColor: BrandColors.cream,
+          elevation: 0,
+          toolbarHeight: 10, 
+          bottom: TabBar(
+            labelColor: BrandColors.darkGreen, // Adjust based on your theme
+            unselectedLabelColor: BrandColors.gray,
+            indicatorColor: BrandColors.darkGreen, // Customize indicator color
+            labelStyle: TextStyleTheme.subtitle_bold_sm, 
+            tabs: const [
+              Tab(text: "Discovery",),
+              Tab(text: "For You"),
             ],
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TabBarView(
+              children: [
+               
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: PostFeed(
+                    stream: postsProvider.getPostsByInterests([]), 
+                    type: FeedType.pantry,
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: PostFeed(
+                    stream: postsProvider.getPostsByInterests(userInterests), 
+                    type: FeedType.pantry,
+                  ),
+                ),
+
+              ],
+            ),
           ),
         ),
       ),

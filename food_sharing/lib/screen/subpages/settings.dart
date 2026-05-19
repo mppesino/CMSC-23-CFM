@@ -19,8 +19,6 @@ class SettingsPageState extends State<SettingsPage> {
   bool _enablePickups = false;
 
   double _discoveryRadius = 5.0;
-  bool _dietaryAlerts = true;
-  bool _reminderAlerts = true;
 
   @override
   void initState(){ //current user profile settings
@@ -29,7 +27,6 @@ class SettingsPageState extends State<SettingsPage> {
     final currentUser = context.read<UsersProvider>().currentUser;
     if(currentUser != null){
       _discoveryRadius = currentUser.discoveryRadius;
-      
       _enableDiscovery = currentUser.enableDiscovery;
       _enableRequests = currentUser.enableRequests;
       _enablePickups = currentUser.enablePickups;
@@ -63,6 +60,8 @@ class SettingsPageState extends State<SettingsPage> {
                     const SnackBar(content: Text('Preferences saved successfully!'), backgroundColor: BrandColors.green,)
                   );
                 }
+                
+                Navigator.pop(context);
               }
 
             }, 

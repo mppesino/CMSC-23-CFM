@@ -28,7 +28,7 @@ class AppFrameState extends State<AppFrame> {
     final user = userProvider.currentUser;
 
     // List of widgets for each tab
-    final List<Widget> _pages = [
+    final List<Widget> pages = [
       const PantryPage(), 
       const SearchPage(),
       ProfilePage(user:user!, showAppBar: false,),
@@ -61,7 +61,7 @@ class AppFrameState extends State<AppFrame> {
             : BrandColors.mediumGreen,
         elevation: 0,
       ),
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: BrandColors.green,
