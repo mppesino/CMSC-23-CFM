@@ -1,19 +1,24 @@
+// POSTS_PROVIDER.DART
+
+// ---------------------------------------------------------------------------------------
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:food_sharing/api/firebase_posts_api.dart';
 import '../models/post.dart';
+// ---------------------------------------------------------------------------------------
 
-import 'package:food_sharing/utils.dart';
-import 'package:food_sharing/models/user.dart' as model;
-
+// ---------------------------------------------------------------------------------------
+// CRUD operations for posts
 class PostsProvider with ChangeNotifier {
   final FirebasePostsApi firebaseService = FirebasePostsApi();
 
   Stream<QuerySnapshot> getPostsByInterests(List<String> interests) {
+    // if there are no interests, it returns all posts
     if (interests.isEmpty) {
       return firebaseService.getAllPosts(); 
     }
 
+    // indexing, order by createdAt (date/time)
     return FirebaseFirestore.instance
         .collection('posts')
         .where('tags', arrayContainsAny: interests)
@@ -21,6 +26,8 @@ class PostsProvider with ChangeNotifier {
         .snapshots();
   }
 
+  // real-time object tracking
+  // if a post is updated, the ui updates instantly
   Stream<DocumentSnapshot<Map<String, dynamic>>> streamPostById(String id) {
     return FirebaseFirestore.instance
         .collection('posts')
@@ -28,6 +35,7 @@ class PostsProvider with ChangeNotifier {
         .snapshots();
   }
 
+  // keeps hte app in sync
   Stream<QuerySnapshot> getAllPosts() {
     return firebaseService.getAllPosts();
   }
@@ -40,6 +48,8 @@ class PostsProvider with ChangeNotifier {
     return firebaseService.getPostsByTransaction(uid);
   }
 
+  // data deserialization
+  // fetch raw map data and onverts into post instance
   Future<Post?> getPostById(String id) async {
     final doc = await firebaseService.getPost(id);
     if (!doc.exists) return null;
@@ -48,49 +58,25 @@ class PostsProvider with ChangeNotifier {
     return Post.fromJson(data);
   }
 
+  // write operation
+  // add ----------------------------------------
   Future<void> addPost(Post post, String? uid) {
     return firebaseService.addPost(post.toJson(), uid);
   }
 
+  // edit ---------------------------------------
   Future<void> editPost(String id, Map<String, dynamic> updates) {
     return firebaseService.editPost(id, updates);
   }
 
+  // delete --------------------------------------
   Future<void> deletePost(String id) {
     return firebaseService.deletePost(id);
   }
 
+  // update ---------------------------------------
   Future<void> updatePostStatus(String id, PostStatus status) {
     return firebaseService.updatePostStatus(id, status);
   }
-
-
-  Stream<List<Post>> getNearbyPosts({required model.User currentUser, required List<String> interests, bool filterByInterests = false}){
-    final Stream<QuerySnapshot> rawStream = (interests.isEmpty || !filterByInterests)? 
-      firebaseService.getAllPosts() : FirebaseFirestore.instance.collection('posts').where('tags', arrayContainsAny: interests).snapshots();
-  
-    return rawStream.map((snapshot){
-      List<Post> filteredPosts = [];
-
-      double userLat = currentUser.lat;
-      double userLng = currentUser.lng;
-
-      for(var doc in snapshot.docs){
-        final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        final post = Post.fromJson(data);
-
-        //only evaluate active items with valid coordinates:
-        if(post.status == PostStatus.available && post.postLat != null && post.postLng != null){
-          double distance = calculateDistance(userLat, userLng, post.postLat, post.postLng);
-
-          //check if item is inside user's saved radius boundary:
-          if(distance<=currentUser.discoveryRadius) filteredPosts.add(post);
-        } 
-      }
-
-      return filteredPosts;
-    });
-  
-  }
 }
+// ---------------------------------------------------------------------------------------
