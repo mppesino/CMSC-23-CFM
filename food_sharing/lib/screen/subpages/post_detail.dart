@@ -482,7 +482,7 @@ class PostDetailPage extends StatelessWidget {
 
     if (confirmed == true) {
 
-      Notifications.showInstantNotif(
+      Notifications.schedulePickupReminder(
         id: post.id.hashCode, //generate a unique integer notification ID
         postTitle: post.title,
         pickupTime: post.pickupDateTime,
@@ -553,7 +553,7 @@ Future<void> _handleAccept(
       );
       
       //SCHEDULE A REMINDER UPON ACCEPTING:
-      Notifications.showInstantNotif(
+      Notifications.schedulePickupReminder(
         id: post.id.hashCode, //generate a unique integer notification ID
         postTitle: post.title,
         pickupTime: post.pickupDateTime,
