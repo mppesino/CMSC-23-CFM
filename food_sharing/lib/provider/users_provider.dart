@@ -97,6 +97,9 @@ Future<void> editUser(String uid, Map<String, dynamic> user) async {
       enablePickups: user['enablePickups'] ?? _currentUser!.enablePickups,
       enableRequests: user['enableRequests'] ?? _currentUser!.enableRequests,
       discoveryRadius: (user['discoveryRadius'] as num?)?.toDouble() ?? _currentUser!.discoveryRadius,
+
+      lat: (user['lat'] as num?)?.toDouble() ?? _currentUser!.lat,
+      lng: (user['lng'] as num?)?.toDouble() ?? _currentUser!.lng,
     );
   }
   notifyListeners();

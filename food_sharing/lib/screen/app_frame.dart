@@ -7,6 +7,8 @@ import 'package:food_sharing/screen/search_page.dart';
 import 'package:food_sharing/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
+import 'package:food_sharing/utils.dart';
+
 class AppFrame extends StatefulWidget {
   const AppFrame({super.key});
 
@@ -21,6 +23,15 @@ class AppFrameState extends State<AppFrame> {
     setState(() {
       _selectedIndex = index;
   });}
+
+  //trigger the location tracker immediately upon opening app:
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {updateUserLocation(context);});
+  }
+
+
 
   @override
   Widget build(BuildContext context) {

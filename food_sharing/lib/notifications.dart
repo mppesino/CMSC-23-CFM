@@ -17,7 +17,34 @@ class Notifications {
     const InitializationSettings settings = InitializationSettings(android: androidSettings, iOS: iosSettings);
 
     await _notificationsPlugin.initialize(settings: settings);
+
+    //request notification permissions:
+    final androidImplementation = _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if(androidImplementation != null) await androidImplementation.requestNotificationsPermission();
+
+    final iosImplementation = _notificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    if(iosImplementation != null) await iosImplementation.requestPermissions();
   }
+
+  //FOR TESTING:
+  static Future<void> showInstantNotif({required int id, required String postTitle, required DateTime pickupTime}) async{
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'instant_alerts', 'Instant Alerts',
+      channelDescription: 'Used for direct immediate application warnings.',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformDetails = NotificationDetails(android: androidDetails, iOS: DarwinNotificationDetails());
+    await _notificationsPlugin.show(
+      id:id, 
+      title: '🥘 Salo Pickup Reminder 🫕', 
+      body: 'Your pickup for "$postTitle" is scheduled soon!', 
+      notificationDetails: platformDetails
+    );
+  }
+
+
 
   static Future<void> schedulePickupReminder({required int id, required String postTitle, required DateTime pickupTime}) async{
     final tz.TZDateTime scheduledDate = tz.TZDateTime.from(
@@ -25,8 +52,10 @@ class Notifications {
       tz.local
     );
 
-    if(scheduledDate.isBefore(DateTime.now())) return;  //don't schedule if reminder time has already passed
-
+    if(scheduledDate.isBefore(DateTime.now())){
+      await showInstantNotif(id: id, postTitle: postTitle, pickupTime: pickupTime);
+      return;
+    }
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'pickup_reminders', 'Pickup Reminders',
       channelDescription: 'Alerts sent 1 hour before scheduled pickup.',
