@@ -19,6 +19,9 @@ class User {
   bool enableRequests;
   bool enablePickups;
 
+  double lat;
+  double lng;
+
   User({
     required this.userId,
     required this.email,
@@ -37,7 +40,11 @@ class User {
 
     this.enableDiscovery = false,
     this.enablePickups = false,
-    this.enableRequests = false
+    this.enableRequests = false,
+
+    //default coordinates (UPLB):
+    this.lat = 14.1653,
+    this.lng = 121.2410,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -62,6 +69,9 @@ class User {
       enableDiscovery: json['enableDiscovery'] ?? false,
       enablePickups: json['enablePickups'] ?? false,
       enableRequests: json['enableRequests'] ?? false,
+
+      lat: (json['lat'] as num?)?.toDouble() ?? 14.1653,
+      lng: (json['lng'] as num?)?.toDouble() ?? 121.2410,
     );
       
   }
@@ -87,6 +97,9 @@ class User {
       'enableDiscovery': enableDiscovery,
       'enablePickups': enablePickups,
       'enableRequests': enableRequests,
+
+      'lat': lat,
+      'lng': lng,
     };
   }
 }

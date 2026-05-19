@@ -31,6 +31,15 @@ class AppFrameState extends State<AppFrame> {
       _selectedIndex = index;
   });}
 
+  //trigger the location tracker immediately upon opening app:
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {updateUserLocation(context);});
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     // fetches the info of the current user to show on profile page

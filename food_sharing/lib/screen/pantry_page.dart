@@ -54,20 +54,42 @@ class PantryPage extends StatelessWidget {
                 // shows all posts in the database
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
-                  child: PostFeed(
-                    stream: postsProvider.getPostsByInterests([]), 
-                    type: FeedType.pantry,
-                  ),
+                  child: StreamBuilder<List<Post>>(
+                    stream: postsProvider.getNearbyPosts(
+                      currentUser: authProvider.customUserData!, 
+                      interests: [],
+                      filterByInterests: false,
+                  ), 
+                  builder: (context, snapshot){
+                    if(snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
+
+                    final posts = snapshot.data ?? [];
+                    return ListView.builder(
+                      itemCount: posts.length, 
+                      itemBuilder: (context, index) => PostCard(post: posts[index], type: FeedType.pantry,));
+                  }),
                 ),
                 // FOR YOU
                 // sends the user's interest and filters it from the database
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
-                  child: PostFeed(
-                    stream: postsProvider.getPostsByInterests(userInterests), 
-                    type: FeedType.pantry,
-                  ),
+                  child: StreamBuilder<List<Post>>(
+                    stream: postsProvider.getNearbyPosts(
+                      currentUser: authProvider.customUserData!, 
+                      interests: userInterests,
+                      filterByInterests: true,
+                  ), 
+                  builder: (context, snapshot){
+                    if(snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
+
+                    final posts = snapshot.data ?? [];
+                    return ListView.builder(
+                      itemCount: posts.length, 
+                      itemBuilder: (context, index) => PostCard(post: posts[index], type: FeedType.pantry,));
+                  }),
                 ),
+
+
 
               ],
             ),
